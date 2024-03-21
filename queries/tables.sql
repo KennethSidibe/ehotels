@@ -1,6 +1,6 @@
 create table hotel_chains(
 	id serial primary key,
-	name text not null,
+	hotel_chain_name text not null,
 	address text not null,
 	email varchar(100) not null,
 	phone_number varchar(20) not null
@@ -8,7 +8,7 @@ create table hotel_chains(
 
 create table hotels(
 	id serial primary key,
-	name text not null, 
+	hotel_name text not null, 
 	email varchar(100) not null,
 	address text not null,
 	phone_number varchar(20) not null,
@@ -19,9 +19,11 @@ create table hotels(
 
 create table employees(
 	id serial primary key,
-	name text not null,
+	first_name text not null,
+	last_name text not null,
 	job_role  text not null,
 	phone_number varchar(20) not null,
+	email text not null,
 	nas varchar(15) not null,
 	created_at timestamp not null default current_timestamp,
 	hotel_id int not null references hotels(id)
@@ -31,6 +33,8 @@ create table rooms(
 	id serial primary key,
 	name text not null,
 	price int not null,
+	room_number int not null,
+	room_floor int not null,
 	commodity text,
 	capacity int,
 	view text,
@@ -40,7 +44,7 @@ create table rooms(
 	hotel_chain_id int not null references hotel_chains(id)
 );
 alter table rooms 
-ADD CONSTRAINT UC_Room unique (hotel_chain_id, hotel_id);
+ADD CONSTRAINT UC_Room unique (room_number, hotel_id);
 
 -- A room is identified by the hotel chain and the hotel id or just its room id which is unique
 
@@ -71,3 +75,8 @@ create table clients(
 -- How to restore backup 
 
 -- pg_restore -p __port__ -U __user__ -d __new-db-name__ -1 __filename.dump__
+
+-- Get the sql code to create tables : 
+-- run this with terminal (WIN)
+
+-- pg_dump --schema-only -p 5433 -U postgres ehotels > create-tables.sql
