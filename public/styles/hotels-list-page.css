@@ -2,35 +2,13 @@
 /* Fonts */
  
 /* Hotel Name */
-.hanuman-thin {
-    font-family: "Hanuman", serif;
-    font-weight: 100;
-    font-style: normal;
-  }
-  
-  .hanuman-light {
-    font-family: "Hanuman", serif;
-    font-weight: 300;
-    font-style: normal;
-  }
-  
-  .hanuman-regular {
-    font-family: "Hanuman", serif;
-    font-weight: 400;
-    font-style: normal;
-  }
-  
-  .hanuman-bold {
-    font-family: "Hanuman", serif;
-    font-weight: 700;
-    font-style: normal;
-  }
-  
-  .hanuman-black {
-    font-family: "Hanuman", serif;
-    font-weight: 900;
-    font-style: normal;
-  }
+
+.calistoga-regular {
+  font-family: "Calistoga", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
 
 /* END: Hotel Name */
 
@@ -66,11 +44,10 @@
 
 .hotel-name {
     font-size: 1.7em;
-    font-family: "Hanuman", serif;
-    font-weight: 700;
-    color: #6f1eff;
+    font-family: "Calistoga", serif;
+    font-weight: 400;
     font-style: normal;
-    text-decoration: none;
+    color: #6f1eff;
 }
 
 /* Hotel name link hover effect */
@@ -112,6 +89,7 @@ a.hotel-name {
     font-optical-sizing: auto;
     font-weight: 300;
     font-style: normal;
+
 }
 
 .price {
