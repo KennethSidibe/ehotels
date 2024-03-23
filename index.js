@@ -52,11 +52,18 @@ app.listen(port, (req, res) => {
 });
 
 app.get('/', async (req, res) => {
+
+    res.render('rooms-list.ejs');
+
+});
+/*
+app.get('/', async (req, res) => {
     
     let hotelsList = await getListHotels();
 
     res.render('hotels-list.ejs', { data: hotelsList});
 });
+*/
 
 // --------------- ** DATA ** --------------------
 
