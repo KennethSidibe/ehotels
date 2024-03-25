@@ -62,6 +62,8 @@ create table clients(
 	id serial primary key,
 	first_name text not null,
 	last_name text not null,
+	email text not null,
+	phone_number text,
 	address text,
 	created_at timestamp not null default current_timestamp
 );
