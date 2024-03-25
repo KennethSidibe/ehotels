@@ -53,7 +53,7 @@ app.listen(port, (req, res) => {
 
 app.get('/', async (req, res) => {
 
-    res.render('rooms-list.ejs');
+    res.render('book-room.ejs');
 
 });
 /*
