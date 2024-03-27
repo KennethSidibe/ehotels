@@ -53,7 +53,39 @@ app.listen(port, (req, res) => {
 
 app.get('/', async (req, res) => {
 
+    res.render('reservation-details.ejs');
+
+});
+app.get('/reservations', async (req, res) => {
+
+    res.render('user-reservations.ejs');
+
+});
+app.get('/hotels', async (req, res) => {
+
+    let hotelsList = await getListHotels();
+
+    res.render('hotels-list.ejs', { data: hotelsList});
+
+});
+app.get('/modify', async (req, res) => {
+
+    res.render('modify-profile.ejs');
+
+});
+app.get('/user', async (req, res) => {
+
+    res.render('user-profile.ejs');
+
+});
+app.get('/book', async (req, res) => {
+
     res.render('book-room.ejs');
+
+});
+app.get('/room', async (req, res) => {
+
+    res.render('rooms-list.ejs');
 
 });
 /*
