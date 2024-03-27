@@ -52,8 +52,10 @@ ADD CONSTRAINT UC_Room unique (room_number, hotel_id);
 create table reservations(
 	id serial primary key,
 	room_id int references rooms(id) not null,
-	reservation_date timestamp not null,
+	arrival_date timestamp not null,
+	departure_date timestamp not null,
 	client_id int references clients(id) not null,
+	price int not null,
 	created_at timestamp not null default current_timestamp
 );
 -- A reservation is identified by the client who made id (client.id) and the room reserved (room.id)
