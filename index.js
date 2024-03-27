@@ -53,6 +53,62 @@ app.listen(port, (req, res) => {
 
 app.get('/', async (req, res) => {
 
+    res.render('hotel-employees.ejs');
+
+});
+app.get('/hotel-reserv-details', async (req, res) => {
+
+    res.render('hotel-reservation-details.ejs');
+
+});
+app.get('/hotel-reservations', async (req, res) => {
+
+    res.render('hotel-reservations.ejs');
+
+});
+app.get('/hotel-add-employee', async (req, res) => {
+
+    res.render('hotel-add-employees.ejs');
+
+});
+app.get('/hotel-modify-room', async (req, res) => {
+
+    res.render('hotel-modify-room.ejs');
+
+});
+app.get('/hotel-add-room', async (req, res) => {
+
+    res.render('hotel-add-room.ejs');
+
+});
+app.get('/hotel-rooms', async (req, res) => {
+
+    res.render('hotel-rooms.ejs');
+
+});
+app.get('/hotel-adm', async (req, res) => {
+
+    res.render('hotel-admin.ejs');
+
+});
+app.get('/modify-employee', async (req, res) => {
+
+    res.render('modify-employee-profile.ejs');
+
+});
+app.get('/employee', async (req, res) => {
+
+    res.render('employee-profile.ejs');
+
+});
+app.get('/clerk-confirm', async (req, res) => {
+
+    res.render('clerk-confirm-client.ejs');
+
+});
+
+app.get('/clerk-book', async (req, res) => {
+
     res.render('clerk-book-room.ejs');
 
 });
