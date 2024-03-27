@@ -1,8 +1,17 @@
 front end: 
--- https://themewagon.com/themes/keto-free-responsive-bootstrap-4-hotel-website-template/
+https://themewagon.com/themes/keto-free-responsive-bootstrap-4-hotel-website-template/
+
+Numbered list Hotels-chain : 
+https://codemyui.com/css-only-numbered-list-with-multi-gradient-color/#google_vignette
+
+reservation details modal: 
+https://codepen.io/designfenix/pen/oNpqMdL
 
 datepicker codepen :
 https://codepen.io/avstorm/pen/zPGmQg
 
-room list codepen : 
+room list UI codepen : 
 https://codepen.io/Snowing/pen/JZRxOK
+
+Phone Number input : 
+https://github.com/jackocnr/intl-tel-input.git
