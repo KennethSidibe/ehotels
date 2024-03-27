@@ -71,6 +71,15 @@
       .hide {
         display: none;
       }
+      .card-room.disabled {
+        opacity: 0.5;
+      }
+      .card-title.disabled {
+        color: #909294;
+      }
+      .price.disabled {
+        color: #6e84a4!important;
+      }
     </style>
   </head>
   <body>
@@ -91,6 +100,7 @@
 
             <!-- Rooms card -->
             <div class="container rooms-card">
+              <input type="hidden" step="0.1" id="room-price" name="roomPrice">
               <h3>Séjour</h3>
               <div class="row mb-5">
                 <div class="col-6">
@@ -130,7 +140,7 @@
                     />
                     <div class="card-body">
                       <h5 class="card-title">Room name</h5>
-                      <p class="price text-primary">250$/Nuit</p>
+                      <p class="price text-primary"><span class="price-digit" >250$</span>/Nuit</p>
                     </div>
                     <div class="icon-container hide">
                       <i class="bi bi-check-square-fill fs-4 text-primary"></i>
@@ -146,7 +156,7 @@
                     />
                     <div class="card-body">
                       <h5 class="card-title">Room name</h5>
-                      <p class="price text-primary">250$/Nuit</p>
+                      <p class="price text-primary"><span class="price-digit" >500$</span>/Nuit</p>
                     </div>
                     <div class="icon-container hide">
                       <i class="bi bi-check-square-fill fs-4 text-primary"></i>
@@ -162,7 +172,7 @@
                     />
                     <div class="card-body">
                       <h5 class="card-title">Room name</h5>
-                      <p class="price text-primary">250$/Nuit</p>
+                      <p class="price text-primary"><span class="price-digit" >50$</span>/Nuit</p>
                     </div>
                     <div class="icon-container hide">
                       <i class="bi bi-check-square-fill fs-4 text-primary"></i>
@@ -178,7 +188,7 @@
                     />
                     <div class="card-body">
                       <h5 class="card-title">Room name</h5>
-                      <p class="price text-primary">250$/Nuit</p>
+                      <p class="price text-primary"><span class="price-digit" >25$</span>/Nuit</p>
                     </div>
                     <div class="icon-container hide">
                       <i class="bi bi-check-square-fill fs-4 text-primary"></i>
