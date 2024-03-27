@@ -40,6 +40,7 @@ create table rooms(
 	view text,
 	extensions text,
 	repairs text,
+	number_of_rooms_for int;
 	hotel_id int not null references hotels(id),
 	hotel_chain_id int not null references hotel_chains(id)
 );
