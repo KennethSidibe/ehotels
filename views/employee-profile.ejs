@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Employee Profile</title>
+
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="styles/rooms-list.css" />
+    <!-- Boostrap -->
+
+    <!-- Boostrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <!-- Boostrap Icons -->
+
+    <!-- Tel Phone Input -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/intl-tel-input@20.1.0/build/css/intlTelInput.css"
+    />
+    <!-- Tel Phone Input -->
+
+    <!-- Font awesome CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <!-- Font Awesome CDN -->
+  </head>
+  <body>
+    <style>
+        .icons-container p {
+            margin: 0; 
+            line-height: 1; 
+            display: flex; 
+            align-items: center;
+          }
+          
+          .container i {
+            line-height: 1;
+            vertical-align: middle;
+          }
+
+          .info-name {
+            color: #0700cf;
+          }
+          .info-name + p {
+            font-weight: 500;
+          }
+          .rounded-container {
+            background-color: #ffffff;
+          }
+          body {
+            background-color: #eff3f7;
+          }
+          .icons-text {
+            font-size: 0.9em;
+          }
+    </style>
+    <div class="container">
+      <div class="row d-flex flex-row">
+        <!-- Profile Side Link -->
+        <div class="col-3">
+            <!-- User Quick View -->
+          <div class="my-4 p-4 rounded-container rounded-4">
+            <h6 class="mb-0">Salut, Moussa</h6>
+            <p>moussasidibe@gmail.com</p>
+
+            <div class="icons-container pt-3 d-flex flex-row justify-content-between">
+              <p class="text-primary"><strong>Clerk</strong></p>
+            </div>
+            <p class="my-1 mb-0" >Hotel name</p>
+          </div>
+          <!-- User Quick View -->
+
+          <p class="" style="font-size: small;" >Gère ton profil ici en cliquant sur l'un des boutons ci-dessous</p>
+
+          <!-- User General Buttons -->
+
+          <!-- Links -->
+          <div class="my-4 py-2 px-4 rounded-container rounded-4">
+            <div class="d-flex flex-row justify-content-between fs-5">
+                <div class="icons-container d-flex flex-row gap-3 align-items-center" >
+                    <i class="bi bi-person"></i>
+                    <p class="text-center icons-text">Profile</p>
+                </div>
+                <i class="fs-2 bi bi-arrow-right-short"></i>
+            </div>
+          </div>
+          <!-- Links -->
+
+        </div>
+        <!-- Profile Side Link -->
+
+        <div class="col">
+          <!-- Profile Info -->
+          <div class="container my-4 p-4 rounded-container rounded-4">
+            <style>
+              
+            </style>
+            <div class="d-flex flex-row">
+              <div class="row">
+                <h3 style="margin-bottom: 0px;" >Kenneth Sidibe</h3>
+                <p class="text-primary" style="margin-bottom: 0px;" >Clerk at Hotel name</p>
+                <p>since 2011</p>
+              </div>
+            </div>
+            <div class="row mt-5">
+                <div class="d-flex flex-row justify-content-between mb-4">
+                    <h3>Renseignements généraux</h3>
+                    <a href="/edit-info">Modifier</a>
+                </div>
+
+              <div class="d-flex flex-column w-75 mx-0">
+                <div class="row container">
+                    <div class="col-6 ps-0 ms-0 d-flex flex-column">
+                        <p class="mb-0 fw-medium">Nom</p>
+                        <p>Sidibe</p>
+                    </div>
+                    
+                    <div class="col-6 d-flex flex-column">
+                        <p class="mb-0 fw-medium">Prénom</p>
+                        <p>Kenneth</p>
+                    </div>
+                </div>
+              </div>      
+
+                <div class="d-flex flex-row justify-content-between my-4">
+                    <h3>Coordonnées</h3>
+                </div>
+
+            <div class="d-flex flex-column w-75 mx-0">
+                <div class="row container">
+                    <div class="col-6 ps-0 ms-0 d-flex flex-column">
+                        <p class="mb-0 fw-medium">Numéro de téléphone</p>
+                        <p>+226 70 25 40 90</p>
+                    </div>
+                    
+                    <div class="col-6 d-flex flex-column">
+                        <p class="mb-0 fw-medium">E-mail</p>
+                        <p>kennethsidibe@gmail.com</p>
+                    </div>
+
+                    <div class="col-6 ps-0 ms-0 d-flex flex-column">
+                        <p class="mb-0 fw-medium">Addresse</p>
+                        <p>450 route du baobab, Ouagadougou, Burkina Faso, A9C P9R</p>
+                    </div>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <!-- Profile Info -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Boostrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>
