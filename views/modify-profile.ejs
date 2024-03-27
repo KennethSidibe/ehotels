@@ -27,8 +27,6 @@
 <body>
 
     <style>
-        .yellow{
-        }
         .hotel-img{
             width: 100%;
             height: 100%;
@@ -41,9 +39,19 @@
             opacity: 0.08; 
             width: 85%;
         }
+        .rounded-container {
+            background-color: #ffffff;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        body {
+            background-color: #eff3f7;
+        }
     </style>
 
-    <div class="container w-75 my-4">
+    <div class="container w-75 rounded-container">
         <div class="d-flex flex-row gap-2" >
             <p><i class="bi bi-arrow-left"></i></p>
             <h5 class="text-primary "><a href="">Retour au profil</a></h5>
@@ -349,7 +357,7 @@
                     <input type="text" id="zip-code" class="form-control" name="zipCode" placeholder="A9C 7R0">
                 </div>
                 
-                <div class="d-flex my-5 flex-row justify-content-center align-items-center">
+                <div class="d-flex mt-5 mb-2 flex-row justify-content-center align-items-center">
                     <button value="submit" class="btn btn-dark rounded-4">
                         Appliquer les changements
                     </button>
