@@ -4,6 +4,9 @@ https://themewagon.com/themes/keto-free-responsive-bootstrap-4-hotel-website-tem
 Numbered list Hotels-chain : 
 https://codemyui.com/css-only-numbered-list-with-multi-gradient-color/#google_vignette
 
+user arrival and departure Date picker :
+https://codepen.io/ankithingarajiya/pen/jjOxMo
+
 reservation details modal: 
 https://codepen.io/designfenix/pen/oNpqMdL
 
