@@ -244,5 +244,28 @@ values(
 	'richardtoure3@gmail.com',
 	'912087567',
 	1
-);					   					  
+);	
+
+-- Some rooms 
+
+insert into rooms(room_type, price, 
+				  hotel_id, hotel_chain_id, room_number, room_floor)
+values
+('luxe', 500, 
+ 4, 1, 901, 9
+);
+
+insert into rooms(room_type, price, 
+				  hotel_id, hotel_chain_id, room_number, room_floor)
+values
+('normal', 200, 
+ 4, 1, 502, 5
+);
+
+insert into rooms(room_type, price, 
+				  hotel_id, hotel_chain_id, room_number, room_floor)
+values
+('éco', 120, 
+ 4, 1, 301, 3
+);
 
