@@ -23,9 +23,11 @@
 </head>
 
 <body>
+  
     <main>
+      <h2 class="fw-bold" >Séjour: <%= data.stay %></h2>
         <ol class="gradient-list">
-          <% data.forEach(hotel => { %>
+          <% data.forEach(function(hotel, index) { %>
           
           <li data-content="<%= hotel.chainIcon %>">
 
@@ -38,7 +40,7 @@
                 <div class=" d-flex flex-row col my-3">
                   <!-- links to google map city location  -->
                     <div class="col location-type"><a href="#" class="link-secondary link-underline-opacity-25 link-opacity-50-hover" >
-                      <%= hotel.location %></a>
+                      <%= hotel.locationShort %></a>
                     </div>
                     <div class="col-4 location-type"><a href="#" class="link-secondary link-underline-opacity-25 link-opacity-50-hover">
                       <%= hotel.category %></a>
@@ -63,7 +65,7 @@
 
                     <div class="col d-flex justify-content-end price my-1"><div class="me-3"><%= hotel.price %>$</div></div>
                     <div class="col d-flex justify-content-end mt-2">
-                      <button class="btn btn-primary">< Voir les chambres</button>
+                      <a href="/hotel-rooms?id=<%= index %>"><button class="btn btn-primary">< Voir les chambres</button></a> 
                     </div>
 
                   </div>

@@ -23,33 +23,33 @@
       <div class="col-6 d-flex flex-column">
         <div class="row">
           <div class="col-10 my-auto">
-            <h3 class="mb-0">Sables de Saaba</h3>
-            <p class="mt-0">101 rue des coulés, Burkina Faso</p>
+            <h3 class="mb-0"><%= data.hotel.name %></h3>
+            <p class="mt-0"><%= data.hotel.location %></p>
           </div>
           <div class="col d-flex align-items-center justify-content-center border-2 border-end h-75">
-            <h2 class="mt-2">🌴</h2>
+            <h2 class="mt-2"><%= data.hotel.categoryIcon %></h2>
           </div>
         </div>
       </div>
 
       <div class="col">
-        <p class="mb-2 fs-5">Luxe</p>
-        <p style="font-size: 0.7em;" class="fw-light" >Pour se reposer</p>
+        <p class="mb-2 fs-5"><%= data.hotel.category %></p>
+        <p style="font-size: 0.7em;" class="fw-light">Pour se reposer</p>
       </div>
 
       <div class="col align-items-center">
         <div class="container">
           <div class="row">
             <div class="col d-flex">
-              <h3 class="mb-0" >200$</h3>
+              <h3 class="mb-0" ><%= data.hotel.price %>$</h3>
               <p>/Nuit</p>
             </div>
-            <p class="mt-0" style="font-size: 0.75em;"><strong>500$ total</strong> 1 chambre - 2 nuits</p>
+            <p class="mt-0" style="font-size: 0.75em;"><strong><%= data.stayPrice %>$ total</strong> <span style="margin-left: 4px;" > 1 chambre - <%= data.numberOfNights %> nuits</span></p>
           </div>
         </div>
       </div>
       <div class="col-2 pt-3 d-flex justify-content-end">
-        <button class="btn btn-dark rounded-4" > Prendre Chambre</button>
+        <a href="/book?id=<%= 0 %>"><button class="btn btn-dark rounded-4">Prendre Chambre</button></a>
       </div>
     </div>
   </div>
@@ -123,13 +123,22 @@
     
   </style>
 
+  <% let recommendedRoomCapacity = data.hotel.rooms[0].capacity
+    let recommendRoomPersonString = '';
+    if(recommendedRoomCapacity > 1) {
+      recommendRoomPersonString = 'personnes';
+    } else {
+      recommendRoomPersonString = 'personne';
+    }
+  %>
+
   <div class="container">
     <div class="d-flex flex-row my-3 gap-3 p-4 rounded-3 reservation-quick-info">
       <p ><strong>Ton Séjour :</strong></p>
       <i class="bi bi-calendar"></i>
-      <p>15 Avr - 20 Avr</p>
+      <p><%= data.stay %></p>
       <i class="bi bi-person"></i>
-      <p>2 personnes - 1 chambre</p>
+      <p><%= recommendedRoomCapacity %> <%= recommendRoomPersonString %> - 1 chambre</p>
     </div>
   </div>
 
@@ -140,141 +149,45 @@
     <div class='container my-4 rooms-container'>
         <div class='center list flex-column'>
 
-          <div class='card flex-row open'>
+          <% let firstOpen = false; %>
+
+          <% data.hotel.rooms.forEach(function(room, index) { %>
+           
+            <% 
+              let roomCapacity = room.capacity;
+              let roomPersonString = 'personne';
+              if(roomCapacity > 1) {
+                roomPersonString = 'personnes';
+              }
+            %>
+
+            <% if(!firstOpen){ %> 
+              <% firstOpen = true; %>
+              <div class='card flex-row open'>
+            <% }else { %>
+          <div class='card flex-row'>
+            <% } %>
             <img src='images/room1.jpg' class='book book-image'>
             <div class='flex-column mt-3 info'>
-              <div class='title'>The Fellowship of the Ring</div>
-              <div class='author'>J.R.R. Tolkien</div>
+              <div class='title'><%= room.room_name %> - <span  ><%= roomCapacity %> <%= roomPersonString %></span> </div>
+              <div class='author'><% room.room_type %></div>
               <div class='hidden bottom summary'>
-                Lorem, ipsum <br>
-                dolor sit amet <br> 
-                consectetur adipisicing elit. Quod ratione impedit temporibus maiores autem aperiam assumenda exercitationem, quisquam nobis esse.
+                * Commodité: Machine à café <br>
+                * Vue: Vue sur la mer <br>
+                * Extensions: Balcon Chauffé 
               </div>
             </div>
             <div class='flex-column group'>
               <div class='members'>
-                200$
+                <%= room.price %>$
               </div>
               <div class='hidden bottom '>
-                <button class='simple '>Réserve</button>
+                <a href="/book?id=<%= index %>"><button class='simple '>Réserver</button></a>
               </div>
             </div>
           </div>
 
-          <div class='card flex-row'>
-            <img src='https://i.pinimg.com/originals/52/ec/12/52ec12f7dd324864949267c92cce2e43.jpg' class='book'>
-            <div class='flex-column info'>
-              <div class='title'>1984</div>
-              <div class='author'>George Orwell</div>
-              <div class='hidden bottom summary'>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quod ratione impedit temporibus maiores autem aperiam assumenda exercitationem, quisquam nobis esse.
-              </div>
-            </div>
-            <div class='flex-column group'>
-              <div class='members'>
-                <span class='current'>14</span> /
-                <span class='max'>30</span>
-              </div>
-              <div class='hidden bottom'>
-                <button class='simple'>Join</button>
-              </div>
-            </div>
-          </div>
-          <div class='card flex-row'>
-            <img src='https://images-na.ssl-images-amazon.com/images/I/51N5qVjuKAL._SX309_BO1,204,203,200_.jpg' class='book'>
-            <div class='flex-column info'>
-              <div class='title'>To Kill a Mockingbird</div>
-              <div class='author'>Harper Lee</div>
-              <div class='hidden bottom summary'>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quod ratione impedit temporibus maiores autem aperiam assumenda exercitationem, quisquam nobis esse.
-              </div>
-            </div>
-            <div class='flex-column group'>
-              <div class='members'>
-                <span class='current'>14</span> /
-                <span class='max'>30</span>
-              </div>
-              <div class='hidden bottom'>
-                <button class='simple'>Join</button>
-              </div>
-            </div>
-          </div>
-          <div class='card flex-row'>
-            <img src='https://upload.wikimedia.org/wikipedia/en/thumb/f/f7/TheGreatGatsby_1925jacket.jpeg/220px-TheGreatGatsby_1925jacket.jpeg' class='book'>
-            <div class='flex-column info'>
-              <div class='title'>Great Gatsby</div>
-              <div class='author'>F Scott Fitzgerald</div>
-              <div class='hidden bottom summary'>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quod ratione impedit temporibus maiores autem aperiam assumenda exercitationem, quisquam nobis esse.
-              </div>
-            </div>
-            <div class='flex-column group'>
-              <div class='members'>
-                <span class='current'>14</span> /
-                <span class='max'>30</span>
-              </div>
-              <div class='hidden bottom'>
-                <button class='simple'>Join</button>
-              </div>
-            </div>
-          </div>
-          <div class='card flex-row'>
-            <img src='https://i.pinimg.com/originals/52/ec/12/52ec12f7dd324864949267c92cce2e43.jpg' class='book'>
-            <div class='flex-column info'>
-              <div class='title'>1984</div>
-              <div class='author'>George Orwell</div>
-              <div class='hidden bottom summary'>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quod ratione impedit temporibus maiores autem aperiam assumenda exercitationem, quisquam nobis esse.
-              </div>
-            </div>
-            <div class='flex-column group'>
-              <div class='members'>
-                <span class='current'>14</span> /
-                <span class='max'>30</span>
-              </div>
-              <div class='hidden bottom'>
-                <button class='simple'>Join</button>
-              </div>
-            </div>
-          </div>
-          <div class='card flex-row'>
-            <img src='https://images-na.ssl-images-amazon.com/images/I/51N5qVjuKAL._SX309_BO1,204,203,200_.jpg' class='book'>
-            <div class='flex-column info'>
-              <div class='title'>To Kill a Mockingbird</div>
-              <div class='author'>Harper Lee</div>
-              <div class='hidden bottom summary'>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quod ratione impedit temporibus maiores autem aperiam assumenda exercitationem, quisquam nobis esse.
-              </div>
-            </div>
-            <div class='flex-column group'>
-              <div class='members'>
-                <span class='current'>14</span> /
-                <span class='max'>30</span>
-              </div>
-              <div class='hidden bottom'>
-                <button class='simple'>Join</button>
-              </div>
-            </div>
-          </div>
-          <div class='card flex-row'>
-            <img src='https://upload.wikimedia.org/wikipedia/en/thumb/f/f7/TheGreatGatsby_1925jacket.jpeg/220px-TheGreatGatsby_1925jacket.jpeg' class='book'>
-            <div class='flex-column info'>
-              <div class='title'>Great Gatsby</div>
-              <div class='author'>F Scott Fitzgerald</div>
-              <div class='hidden bottom summary'>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quod ratione impedit temporibus maiores autem aperiam assumenda exercitationem, quisquam nobis esse.
-              </div>
-            </div>
-            <div class='flex-column group'>
-              <div class='members'>
-                <span class='current'>14</span> /
-                <span class='max'>30</span>
-              </div>
-              <div class='hidden bottom'>
-                <button class='simple'>Join</button>
-              </div>
-            </div>
-          </div>
+          <% }) %>
 
         </div>
       </div>  
