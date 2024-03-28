@@ -1,0 +1,140 @@
+body
+  font-family: -apple-system, BlinkMacSystemFont, "myriad-pro", sans-serif
+  font-weight: 400
+
+.date
+  max-width: 120px
+  padding: 5px 10px
+  border: 1px solid #C8CCD4
+  border-radius: 3px
+  text-align: center
+  appearance: none
+  margin-top: 35%
+  &:focus
+    outline: none
+    border-color: #5D9CF5
+
+.ui-datepicker
+  width: 280px
+  padding: 5px
+  background: #2B323B
+  border-radius: 4px
+  box-shadow: 0 4px 40px -8px rgba(black,.2)
+  opacity: 0
+  @media screen and (max-width: 580px)
+    top: auto !important
+    right: 0 !important
+    bottom: 0 !important
+    left: 0 !important
+    width: 100%
+    border-radius: 0px
+  &.active
+    opacity: 1
+    
+
+.ui-datepicker-header
+  height: 40px
+  padding: 3px
+  margin-bottom: 10px
+  .ui-datepicker-title
+    text-align: center
+    line-height: 34px
+
+
+.ui-datepicker-month,
+.ui-datepicker-year
+  -webkit-appearance: none
+  border: 0
+  background: none
+  outline: none
+  font-size: 14px
+  font-weight: 600
+  color: white
+  margin: 0 1px
+
+.ui-datepicker-prev, .ui-datepicker-next
+  position: relative
+  display: inline-block
+  width: 34px
+  height: 34px
+  cursor: pointer
+  text-indent: 9999px
+  overflow: hidden
+  border-radius: 3px
+  &:hover
+    background: #444B56
+
+.ui-datepicker-prev
+  float: left
+  &:after
+    transform: rotate(45deg)
+    margin-left: 15px
+
+.ui-datepicker-next
+  float: right
+  &:after
+    transform: rotate(-135deg)
+    margin-left: 13px
+
+.ui-datepicker-prev,
+.ui-datepicker-next
+  &:after
+    content: ''
+    position: absolute
+    display: block
+    margin-top: -10px
+    width: 6px
+    height: 6px
+    border-left: 2px solid #C2C7D1
+    border-bottom: 2px solid #C2C7D1
+    pointer-events: none
+
+
+.ui-datepicker-calendar
+  width: 100%
+  text-align: center
+  thead
+    tr
+      th
+        width: 40px
+        padding-bottom: 6px
+        span
+          display: block
+          width: 100%
+          padding: 0
+          color: #8D9298
+          font-size: 10px
+          font-weight: 700
+          text-transform: uppercase
+          text-align: center
+  tbody
+    tr
+      td
+        padding-right: 3px
+        padding-bottom: 3px
+        &:first-child
+          padding-left: 3px
+
+.ui-state-default
+  display: block
+  text-decoration: none
+  color: white
+  height: 34px
+  line-height: 34px
+  border-radius: 3px
+  font-size: 12px
+  &:hover
+    background: #444B54
+    text-decoration: none
+    color: white
+
+.ui-state-highlight
+  color: #FED615
+.ui-state-active:not(.ui-state-highlight)
+  color: white
+  background: #5D9CF5
+
+.ui-datepicker-unselectable
+  .ui-state-default
+    color: rgba(white,.2)
+    pointer-events: none
