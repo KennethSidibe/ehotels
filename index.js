@@ -95,6 +95,19 @@ app.post('/create-reserv', async (req, res) => {
     let userCity = req.body.city;
     let userCountry = req.body.country;
     let userZipCode = req.body.zipCode;
+    let clientData = {
+        firstName: userFirstName,
+        lastName:userLastName,
+        email:userEmail,
+        phoneNumber:userPhoneNumber,
+        pwd:userPwd,
+        streetName:userStreetName,
+        city:userCity,
+        country:userCountry,
+        zipCode:userZipCode
+    }
+
+    let newClientId = await createClient(clientData);
 
     let reservRoomId = parseInt(currentRoomSelected.id);
     let reservArrivalDate = userArrivalDate;
@@ -306,6 +319,13 @@ let testClientData = {
     phoneNumber:'+22670078008',
     pwd: '1234567890'
 };
+let testReservationData = {
+    roomId: 32,
+    arrivalDateInsert: "08/03/2024",
+    departureDateInsert: "10/03/2024",
+    clientId: 3,
+    stayPrice: 200
+};
 
 // --------------- ** DATA ** -----------------
 
@@ -357,19 +377,42 @@ async function createClient(clientData) {
     }
 }
 
+async function createReservation(reservationData) {
+    let roomId = parseInt(reservationData.roomId);
+    let arrivalDateInsert =  convertDateForDbInsert(reservationData.arrivalDateInsert);
+    let departureDateInsert =  convertDateForDbInsert(reservationData.departureDateInsert);
+    let clientId = parseInt(reservationData.clientId);
+    let price = parseInt(reservationData.stayPrice);
+
+    const query = `INSERT INTO reservations (room_id, arrival_date, client_id, 
+        departure_date, price)
+        VALUES(
+        $1, $2, $3,
+        $4, $5
+        )
+        RETURNING id;`
+    const paramValues = [roomId, arrivalDateInsert, clientId, departureDateInsert, price];
+
+    try {
+        let result = await db.query(query, paramValues);
+        console.log(`Id of new reservation: ${result.rows[0].id}`);
+        console.log(`Parse Int test: ${parseInt(result.rows[0].id)}`);
+        if(typeof(result.rows[0].id) === 'number') {
+            return parseInt(result.rows[0].id);
+        }
+    } catch (error) {
+        console.error(`Error while inserting new reservations : ${error.stack}`);
+        throw error;
+    }
+
+}
+
 function getPersonString(roomCapacity) {
     return roomCapacity == 1 ? 'personne' : 'personnes';
 }
 function getNightString(numberOfNights) {
     return numberOfNights == 1 ? 'nuit' : 'nuits';
 }
-
-// query to select highest price room for hotel id
-/*
-select * from rooms
-where hotel_id = 11
-order by price DESC;
-*/
 
 async function getListHotels() {
     try {
@@ -434,6 +477,17 @@ async function verifyPassword(password, hashedPassword) {
     } catch (error) {
         console.error('Error verifying password:', error);
     }
+}
+
+function convertDateForDbInsert(dateString) {
+    const parts = dateString.split("/");
+    // Assuming dateString is in DD/MM/YYYY format
+    const day = parts[0];
+    const month = parts[1];
+    const year = parts[2];
+    // Convert to YYYY-MM-DD format
+    const isoString = `${year}/${month}/${day}`;
+    return isoString;
 }
 
 function categoryToIcon(category) {
