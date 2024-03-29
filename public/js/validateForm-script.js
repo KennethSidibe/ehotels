@@ -84,11 +84,11 @@ $(document).ready(function() {
     }
     
     $('#submitFormBtn').click(function() {
-    
-        // stop form submission
-        $('#bookRoomForm').submit(function(event){
-            event.preventDefault();
-        });
+        $('#bookRoomForm').submit();
+    });
+
+    $('#bookRoomForm').submit(function(event) {
+        
         let formFirstName = $('#'+ FIRST_NAME_INPUT_ID).val();
         let formLastName = $('#'+ LAST_NAME_INPUT_ID).val();
         let formEmail = $('#'+ EMAIL_INPUT_ID).val();
@@ -112,8 +112,9 @@ $(document).ready(function() {
     
         // if valid, submit the form.
         if (firstNameValid && lastNameValid && emailValid && pwdValid && phoneValid && streetNameValid && countryValid && cityValid && zipValid) {
-            alert("Demo only. No form was posted.");
+            console.log("form data valid, submitting");
         } else {
+            event.preventDefault();
             $('#bookRoomForm')[0].scrollIntoView({
                 behavior: 'smooth',
                 block: 'start'
