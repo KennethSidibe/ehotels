@@ -5,6 +5,7 @@ import { dirname } from "path";
 import ejs from "ejs";
 import { fileURLToPath } from "url";
 import bcrypt from "bcrypt";
+import { error } from "console";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -95,6 +96,7 @@ app.post('/create-reserv', async (req, res) => {
     let userCity = req.body.city;
     let userCountry = req.body.country;
     let userZipCode = req.body.zipCode;
+
     let clientData = {
         firstName: userFirstName,
         lastName:userLastName,
@@ -107,14 +109,27 @@ app.post('/create-reserv', async (req, res) => {
         zipCode:userZipCode
     }
 
+    console.log(`New Client Data: ${JSON.stringify(clientData, null, 2)}`);
+
     let newClientId = await createClient(clientData);
+    currentClientId = newClientId;
 
     let reservRoomId = parseInt(currentRoomSelected.id);
     let reservArrivalDate = userArrivalDate;
     let reservDepartureDate = userDepartureDate;
-    let clientId = 0;
     let reservPrice = currentStayPrice;
-    res.render('rooms-list.ejs', {data:currentRoomsHotelPageData});
+    let reservationData = {
+        roomId: reservRoomId,
+        arrivalDateInsert: reservArrivalDate,
+        departureDateInsert: reservDepartureDate,
+        clientId: currentClientId,
+        stayPrice: reservPrice
+    };
+
+    let newReservationId = await createReservation(reservationData);
+    currentReservationId = newReservationId;
+
+    res.redirect('/?successful');
 
 });
 
@@ -127,7 +142,6 @@ app.get('/book', async (req, res) => {
     let stayPrice = parseInt(currentRoomSelected.price) * numberOfNights;
     currentStayPrice = stayPrice;
     currentPersonString = getPersonString(currentRoomSelected.capacity);
-    console.log(`Room object: ${JSON.stringify(currentRoomSelected, null, 2)}`);
     let bookPageData = {
         hotelName:currentHotelSelected.name,
         roomName:currentRoomSelected.room_name,
@@ -297,7 +311,9 @@ let userDepartureDate = '';
 let numberOfNights = 0;
 let currentHotelChainId = 0;
 let currentHotelId = 0;
+let currentReservationId = 0;
 let currentRoomId = 0;
+let currentClientId = 0;
 let currentStay = '';
 let currentStayPrice = 0;
 let currentPersonString = '';
@@ -352,8 +368,6 @@ async function createClient(clientData) {
     
     let fullAddress = `${clientData.streetName}, ${clientData.city}, ${clientData.country}, ${clientData.zipCode}`;
     let hashPwd = await hashPassword(clientData.pwd);
-    console.log(`client pwd : ${clientData.pwd}`);
-    console.log(`client hashed pwd : ${hashPwd}`);
     
     const query = `insert into clients (first_name, last_name, 
         address, email, phone_number, pwd)
@@ -370,7 +384,12 @@ async function createClient(clientData) {
     try {
         const result = await db.query(query,paramValues);
         const newClientId = result.rows[0].id; 
-        console.log("New client ID: ", newClientId);
+        if(typeof(newClientId) === 'number'){
+            return parseInt(newClientId);
+        } else {
+            console.error("Error inserting new client:", error.message);
+            throw error;
+        }
 
     } catch (error) {
         console.error("Error inserting new client:", error.message);
@@ -395,8 +414,6 @@ async function createReservation(reservationData) {
 
     try {
         let result = await db.query(query, paramValues);
-        console.log(`Id of new reservation: ${result.rows[0].id}`);
-        console.log(`Parse Int test: ${parseInt(result.rows[0].id)}`);
         if(typeof(result.rows[0].id) === 'number') {
             return parseInt(result.rows[0].id);
         }
