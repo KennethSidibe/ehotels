@@ -246,15 +246,98 @@ app.get('/employee', async (req, res) => {
     res.render('employee-profile.ejs');
 
 });
-app.get('/clerk-confirm', async (req, res) => {
-
-    res.render('clerk-confirm-client.ejs');
-
-});
 
 app.get('/clerk-book', async (req, res) => {
 
-    res.render('clerk-book-room.ejs');
+    let clerkHotelData = await getHotelData(10);
+
+    clerkCurrentHotelData = clerkHotelData;
+
+    console.log(`Clerk hotel data: ${JSON.stringify(clerkCurrentHotelData, null, 2)}`);
+
+    res.render('clerk-book-room.ejs', {data:clerkCurrentHotelData});
+
+});
+app.post('/clerk-create-reserv', async (req, res) => {
+
+    let newClientId = await createClient(clerkBookClientData);
+    clerkBookReservationData['clientId'] = newClientId;
+
+    console.log(`New client created: ${newClientId}`);
+
+    let newReservationId = await createReservation(clerkBookReservationData);
+    currentReservationId = newReservationId;
+
+    console.log(`New reservation created: ${currentReservationId}`);
+
+    res.redirect('/?successful');
+
+});
+
+app.post('/clerk-confirm', async (req, res) => {
+
+    let userFirstName = req.body.firstName;
+    let userLastName = req.body.lastName;
+    let userEmail = req.body.email;
+    let userPwd = req.body.pwd;
+    let userPhoneNumber = req.body.phoneNumber;
+    let userStreetName = req.body.streetName;
+    let userCity = req.body.city;
+    let userCountry = req.body.country;
+    let userZipCode = req.body.zipCode;
+    let userFullAddress = `${userStreetName}, ${userCity}, ${userCountry}, ${userZipCode}`;
+
+    let clientData = {
+        firstName: userFirstName,
+        lastName:userLastName,
+        email:userEmail,
+        phoneNumber:userPhoneNumber,
+        pwd:userPwd,
+        streetName: userStreetName,
+        city: userCity,
+        zipCode: userZipCode,
+        address: userFullAddress,
+    };
+    
+    clerkBookClientData = clientData;
+
+    let hotelName = clerkCurrentHotelData.hotel_name;
+    let hotelLocation = clerkCurrentHotelData.address;
+    let reservRoomSelectedId = parseInt(req.body.roomId);
+    let reservRoomId = parseInt(clerkCurrentHotelData.rooms[reservRoomSelectedId].id);   
+    let reservRoomPrice = parseInt(clerkCurrentHotelData.rooms[reservRoomSelectedId].price);
+    let reservRoomCapacity = parseInt(clerkCurrentHotelData.rooms[reservRoomSelectedId].capacity);
+    let reservRoomName = clerkCurrentHotelData.rooms[reservRoomSelectedId].room_name;
+    
+    let reservArrivalDate = req.body.arrivalDate;
+    let reservDepartureDate = req.body.departureDate;
+    let numberOfNights = countNumberOfDaysWithDashes(reservArrivalDate, reservDepartureDate);
+    
+    let arrivalDateFullDay = formatDateWithDashToFullDay(reservArrivalDate);
+    let departureDateFullDay = formatDateWithDashToFullDay(reservDepartureDate);
+    let nightString = capitalizeFirstLetter(getNightString(numberOfNights));
+    let personString = capitalizeFirstLetter(getPersonString(reservRoomCapacity));
+    let stayPrice = reservRoomPrice * numberOfNights;
+
+    let reservationData = {
+        hotelName:hotelName,
+        hotelLocation:hotelLocation,
+        roomId: reservRoomId,
+        reservArrivalDate: arrivalDateFullDay,
+        reservDepartureDate: departureDateFullDay,
+        arrivalDateInsert: convertDateForDbInsert(replaceDashesWithSlashes(reservArrivalDate)),
+        departureDateInsert: convertDateForDbInsert(replaceDashesWithSlashes(reservDepartureDate)),
+        numberOfNights: numberOfNights,
+        roomPrice: reservRoomPrice,
+        stayPrice:stayPrice,
+        capacity:reservRoomCapacity,
+        nightString:nightString,
+        personString:personString
+    };
+
+    clerkBookReservationData = reservationData;
+
+    res.render('clerk-confirm-client.ejs', {clientData:clerkBookClientData, reservData:clerkBookReservationData});
 
 });
 app.get('/reserv-details', async (req, res) => {
@@ -342,6 +425,10 @@ let testReservationData = {
     clientId: 3,
     stayPrice: 200
 };
+let clerkBookClientData = {};
+let clerkBookReservationData = {};
+let clerkConfirmDetails = {};
+let clerkCurrentHotelData = {};
 
 // --------------- ** DATA ** -----------------
 
@@ -361,6 +448,26 @@ async function getHotelRooms(hotelId) {
         }
     } catch (error) {
         console.error("Error while querying hotels list", error.stack);
+    }
+}
+
+async function getHotelData(hotelId) {
+    const hotelQuery = 'SELECT * from hotels WHERE id = $1';
+    const hotelParamValues = [hotelId];
+
+    try {
+        const hotelResult = await db.query(hotelQuery, hotelParamValues);
+        const hotelRooms = await getHotelRooms(hotelId);
+        if(hotelResult.rows.length > 0 && hotelRooms.length > 0) {
+            console.log(`test getting Hotel Data: ${JSON.stringify(hotelResult.rows, null, 2)}`);
+            console.log(`test getting RoomHotels Data: ${JSON.stringify(hotelRooms, null, 2)}`);
+            let hotelData = hotelResult.rows[0];
+            hotelData["rooms"] = hotelRooms;
+            return hotelData;
+        }
+    } catch (error) {
+        console.error("Error while querying hotel data: ", error.stack);
+        throw error;
     }
 }
 
@@ -402,6 +509,10 @@ async function createReservation(reservationData) {
     let departureDateInsert =  convertDateForDbInsert(reservationData.departureDateInsert);
     let clientId = parseInt(reservationData.clientId);
     let price = parseInt(reservationData.stayPrice);
+
+    console.log(`arrival Date inside create meth: ${arrivalDateInsert}`);
+    console.log(`departure Date inside create meth: ${departureDateInsert}`);
+
 
     const query = `INSERT INTO reservations (room_id, arrival_date, client_id, 
         departure_date, price)
@@ -480,6 +591,10 @@ async function hashPassword(password) {
         console.error('Error hashing password:', error);
         throw error; // It's good practice to re-throw the error or handle it appropriately
     }
+}
+
+function replaceDashesWithSlashes(dateString) {
+    return dateString.replace(/-/g, '/');
 }
 
 async function verifyPassword(password, hashedPassword) {
@@ -568,6 +683,25 @@ function countNumberOfDays(arrivalDate, departureDate){
     return parseInt(differenceInDays);
 }
 
+function countNumberOfDaysWithDashes(arrivalDate, departureDate){
+    // Parse the input strings to create Date objects
+    const [arrivalYear, arrivalMonth, arrivalDay] = arrivalDate.split('-');
+    const [departureYear, departureMonth, departureDay] = departureDate.split('-');
+    
+    // Note: Months are 0-indexed in JavaScript Date, so subtract 1
+    const arrival = new Date(arrivalYear, arrivalMonth - 1, arrivalDay);
+    const departure = new Date(departureYear, departureMonth - 1, departureDay);
+    
+    // Calculate the difference in milliseconds
+    const differenceInMilliseconds = departure - arrival;
+    
+    // Convert milliseconds to days (1000 milliseconds in a second, 60 seconds in a minute,
+    // 60 minutes in an hour, 24 hours in a day)
+    const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+    
+    return parseInt(differenceInDays);
+}
+
 function formatRangeToShortString(arrivalDate, departureDate) {
     const monthNames = ["Jan", "Fev", "Mar", "Avr", "Mai", "Jui", "Jul", "Aou", "Sep", "Oct", "Nov", "Dec"];
 
@@ -589,6 +723,17 @@ function formatDateToFullDay(dateString) {
 
     // Parse the departure date
     const [day, month, year] = dateString.split('/');
+    const dayDate = new Date(year, month - 1, day);
+    const formattedDate = `${dayNames[dayDate.getDay()]} ${parseInt(day)} ${monthNames[dayDate.getMonth()]}`;
+
+    return formattedDate;
+}
+function formatDateWithDashToFullDay(dateString) {
+    const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aôut", "Septembre", "Octobre", "Novembre", "Décembre"];
+    const dayNames = [ "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+
+    // Parse the departure date
+    const [year, month, day] = dateString.split('-');
     const dayDate = new Date(year, month - 1, day);
     const formattedDate = `${dayNames[dayDate.getDay()]} ${parseInt(day)} ${monthNames[dayDate.getMonth()]}`;
 
