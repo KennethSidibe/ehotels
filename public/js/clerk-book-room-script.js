@@ -2,12 +2,12 @@ $(document).ready(() => {
 
     // ----------------- CARDS Animations -------------------
 
-
     // This variable prevents that when the card is first clicked
     // that the card add the class clicked and removes it in the 
     // next line
     let noFirstClick = false;
     let enabledCardPrice = 0;      
+    let enabledCardId = 0;
     function cardHoverEffect() {
         let $this = $(this);
         $(this).children('.icon-container').toggleClass('hide');
@@ -48,9 +48,13 @@ $(document).ready(() => {
 
     function disableOtherCards(cardClicked) {
         let priceString = $(cardClicked).find('.price-digit').text();
+        let roomSelectedId = $(cardClicked).find('.roomCardId').text();
+
+        enabledCardId = parseInt(roomSelectedId);
         enabledCardPrice = parseInt(priceString);
         //set the price of the hidden input
         $('#roomPriceInput').val(enabledCardPrice);
+        $('#roomIdInput').val(enabledCardId);
 
         $('.card-room').not(cardClicked).each(function() {
             $(this).addClass('disabled');
@@ -63,8 +67,11 @@ $(document).ready(() => {
 
     function enableOtherCards(cardClicked) {
         enabledCardPrice = 0;
+        enabledCardId = 0;
         //set the price of the hidden input
         $('#roomPriceInput').val(enabledCardPrice);
+        $('#roomIdInput').val(enabledCardId);
+
 
         $('.card-room').not(cardClicked).each(function() {
             $(this).removeClass('disabled');
@@ -105,5 +112,8 @@ $(document).ready(() => {
     $('#arrivalDateInput')[0].value = currentDate;
 
     // ----------------- Current date for arrival Date Picker -------------------
+
+    console.log("Current Room Selected Id: ", enabledCardId);
+    console.log("Current Room Selected Id: ", enabledCardPrice);
     
 });

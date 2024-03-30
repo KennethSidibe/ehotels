@@ -206,7 +206,6 @@ $(document).ready(function() {
         if (stayDatesValid && roomPriceValid && firstNameValid 
             && lastNameValid && emailValid && pwdValid && phoneValid 
             && streetNameValid && countryValid && cityValid && zipValid) {
-            console.log("form data valid, submitting");
         } else {
             event.preventDefault();
             $('#bookRoomForm')[0].scrollIntoView({

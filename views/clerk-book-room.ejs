@@ -91,7 +91,7 @@
   </head>
   <body>
     <div class="container w-75">
-      <form id="bookRoomForm" action="/clerk-create-reserv" method="post">
+      <form id="bookRoomForm" action="/clerk-confirm" method="post">
         <div class="col">
           <!-- Profile Info -->
           <div class="container my-4 p-4 rounded-container rounded-4">
@@ -110,11 +110,11 @@
               <input
                 type="hidden"
                 step="0.1"
-                value="250"
+                value="-1"
                 id="roomPriceInput"
                 name="roomPrice"
               />
-              <input type="hidden" step="0.1" id="roomIdInput" name="roomId" />
+              <input type="hidden" step="1" value="-1" id="roomIdInput" name="roomId" />
               <h3>Séjour</h3>
               <div class="row mb-5">
                 <div class="col-6">
@@ -156,6 +156,7 @@
 
               <h3 style="margin-bottom: 0.7em">Type de chambre</h3>
               <div class="row row-cols-3 gy-3">
+                <% data.rooms.forEach(function(room, index) { %>
                 <div class="col">
                   <div class="card card-room not-clicked">
                     <img
@@ -164,10 +165,11 @@
                       alt="..."
                     />
                     <div class="card-body">
-                      <h5 class="card-title">Room name</h5>
+                      <h5 class="card-title"><%= room.room_name %></h5>
                       <p class="price text-primary">
-                        <span class="price-digit">250$</span>/Nuit
+                        <span class="price-digit"><%= room.price %>$</span>/Nuit
                       </p>
+                      <div class="roomCardId hide"><%= index %></div>
                       <div class="roomSelectId hide"></div>
                     </div>
                     <div class="icon-container hide">
@@ -175,71 +177,12 @@
                     </div>
                   </div>
                 </div>
-
-                <div class="col">
-                  <div class="card card-room not-clicked">
-                    <img
-                      src="images/room1.jpg"
-                      class="card-img-top"
-                      alt="..."
-                    />
-                    <div class="card-body">
-                      <h5 class="card-title">Room name</h5>
-                      <p class="price text-primary">
-                        <span class="price-digit">500$</span>/Nuit
-                      </p>
-                      <div class="roomSelectId hide"></div>
-                    </div>
-                    <div class="icon-container hide">
-                      <i class="bi bi-check-square-fill fs-4 text-primary"></i>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col">
-                  <div class="card card-room not-clicked">
-                    <img
-                      src="images/room1.jpg"
-                      class="card-img-top"
-                      alt="..."
-                    />
-                    <div class="card-body">
-                      <h5 class="card-title">Room name</h5>
-                      <p class="price text-primary">
-                        <span class="price-digit">50$</span>/Nuit
-                      </p>
-                      <div class="roomSelectId hide"></div>
-                    </div>
-                    <div class="icon-container hide">
-                      <i class="bi bi-check-square-fill fs-4 text-primary"></i>
-                    </div>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="card card-room not-clicked">
-                    <img
-                      src="images/room1.jpg"
-                      class="card-img-top"
-                      alt="..."
-                    />
-                    <div class="card-body">
-                      <h5 class="card-title">Room name</h5>
-                      <p class="price text-primary">
-                        <span class="price-digit">25$</span>/Nuit
-                      </p>
-                      <div class="roomSelectId hide"></div>
-                    </div>
-                    <div class="icon-container hide">
-                      <i class="bi bi-check-square-fill fs-4 text-primary"></i>
-                    </div>
-                  </div>
-                </div>
-                
+                <% }) %>
               </div>
               <div
-                  id="roomError"
-                  class="hide form-text text-danger fw-medium"
-                ></div>
+                id="roomError"
+                class="hide form-text text-danger fw-medium"
+              ></div>
             </div>
             <!-- Rooms Card -->
 

@@ -70,12 +70,12 @@
                     <div class="row container">
                         <div class="col-6 ps-0 ms-0 d-flex flex-column">
                             <p class="mb-0 fw-medium">Nom</p>
-                            <p>Sidibe</p>
+                            <p><%= clientData.lastName %></p>
                         </div>
             
                         <div class="col-6 d-flex flex-column">
                             <p class="mb-0 fw-medium">Prénom</p>
-                            <p>Kenneth</p>
+                            <p><%= clientData.firstName %></p>
                         </div>
                     </div>
                   </div>
@@ -86,16 +86,16 @@
                     <div class="row container">
                         <div class="col-6 ps-0 ms-0 d-flex flex-column">
                             <p class="mb-0 fw-medium">Numéro de téléphone</p>
-                            <p>+226 70 25 40 90</p>
+                            <p><%= clientData.phoneNumber %></p>
                         </div>
             
                         <div class="col-6 d-flex flex-column">
                             <p class="mb-0 fw-medium">E-mail</p>
-                            <p>kennethsidibe@gmail.com</p>
+                            <p><%= clientData.email %></p>
                         </div>
                         <div class="col-6 ps-0 ms-0 d-flex flex-column">
                             <p class="mb-0 fw-medium">Addresse</p>
-                            <p>450 route du baobab, Ouagadougou, Burkina Faso, A9C P9R</p>
+                            <p><%= clientData.address %></p>
                         </div>
                     </div>
                   </div>
@@ -122,24 +122,24 @@
                         <div class="d-flex " >
                             <h4 style="margin-bottom: 0px;">Room Name</h4>
                         </div>
-                        <h6 >Hotel name</h6>
-                        <p class="fw-light">Hotel localisation</p>
+                        <h6><%= reservData.hotelName %></h6>
+                        <p class="fw-light">H<%= reservData.hotelLocation %></p>
                     </div>
                           </div>
             
                           <div class="row my-5">
                     <div class="col d-flex flex-column">
                         <p class="my-2 info-name">Arrivée</p>
-                        <p class="fs-5 reservation-date-info" >Lundi 02 Avril</p>
+                        <p class="fs-5 reservation-date-info" ><%= reservData.reservArrivalDate %></p>
                         <input type="date" name="arrivalDate" id="arrival-date" class="form-control hide" >
                     </div>
                     <div class="col d-flex flex-column align-items-center">
                         <i class="bi bi-moon-stars fs-2 my-2"></i>
-                        <p class="fw-medium">10 Nuits</p>
+                        <p class="fw-medium"><%= reservData.numberOfNights %> <%= reservData.nightString %></p>
                     </div>
                     <div class="col d-flex flex-column align-items-end">
                         <p class="info-name">Départ</p>
-                        <p class="fs-5 reservation-date-info" >Mardi 10 Avril</p>
+                        <p class="fs-5 reservation-date-info" ><%= reservData.reservDepartureDate %></p>
                         <input type="date" name="arrivalDate" id="departure-date" class="form-control hide" >
                     </div>
                           </div>
@@ -149,11 +149,11 @@
                           <div class="row my-5">
                     <div class="col d-flex flex-column">
                         <p class="my-2 info-name" >Chambres & Personnes</p>
-                        <p class="fs-5" >2 Personnes (1 chambre)</p>
+                        <p class="fs-5" ><%= reservData.roomCapacity %> <%= reservData.personString %> (1 chambre)</p>
                     </div>
                     <div class="col d-flex flex-column align-items-end">
                         <p class="info-name" >Prix/Nuit</p>
-                        <p>150$</p>
+                        <p><%= reservData.roomPrice %>$</p>
                     </div>
                           </div>
                           <div class="d-flex justify-content-center">
@@ -195,12 +195,12 @@
                         <p class="my-2 info-name fw-bold" >Total price:</p>
                     </div>
                     <div class="col d-flex flex-column align-items-end">
-                        <h2 class="my-0" >1200$</h2>
-                        <p class="fw-light" >10 nuits</p>
+                        <h2 class="my-0" ><%= reservData.stayPrice %>$</h2>
+                        <p class="fw-light" ><%= reservData.numberOfNights %> <%= reservData.nightString %></p>
                     </div>
                           </div>
                           <div class="d-flex gap-5 flex-row justify-content-center align-items-center">
-                    <button type="button" id="modifyBtn" class="btn btn-dark fs-4 rounded-4">
+                    <button type="submit" id="modifyBtn" class="btn btn-dark fs-4 rounded-4">
                         Réserver la chambre
                     </button>
                           </div>
@@ -215,7 +215,7 @@
     <!-- JQuery CDN -->
 
     <!-- Page Script -->
-    <script src="js/reservation-details-script.js"></script>
+    <!-- <script src="js/reservation-details-script.js"></script> -->
     <!-- Page Script -->
 </body>
 
