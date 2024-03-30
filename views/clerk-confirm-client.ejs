@@ -56,164 +56,157 @@
 
     <div class="container w-75 my-4 p-4 rounded-container rounded-5">
         
-        <h2 style="margin-bottom: 0px;" >Confirmation de réservation</h2>
-        <p class="text-secondary" style="font-size: 0.95em">Employee: Kenneth Sidibe</p>
-
-        <!-- Profile Info -->
-        <div class="my-4 p-4 ">
+        <form action="/clerk-create-reserv" method="post">
+            <h2 style="margin-bottom: 0px;" >Confirmation de réservation</h2>
+            <p class="text-secondary" style="font-size: 0.95em">Employee: Kenneth Sidibe</p>
+            <!-- Profile Info -->
+            <div class="my-4 p-4 ">
             
-            <div class="row mt-3">
-                <div class="d-flex flex-row justify-content-between mb-4">
-                    <h3>Renseignements généraux</h3>
-                </div>
-
-              <div class="d-flex flex-column w-75 mx-0">
-                <div class="row container">
-                    <div class="col-6 ps-0 ms-0 d-flex flex-column">
-                        <p class="mb-0 fw-medium">Nom</p>
-                        <p>Sidibe</p>
+                <div class="row mt-3">
+                    <div class="d-flex flex-row justify-content-between mb-4">
+                        <h3>Renseignements généraux</h3>
                     </div>
-                    
-                    <div class="col-6 d-flex flex-column">
-                        <p class="mb-0 fw-medium">Prénom</p>
-                        <p>Kenneth</p>
+                  <div class="d-flex flex-column w-75 mx-0">
+                    <div class="row container">
+                        <div class="col-6 ps-0 ms-0 d-flex flex-column">
+                            <p class="mb-0 fw-medium">Nom</p>
+                            <p>Sidibe</p>
+                        </div>
+            
+                        <div class="col-6 d-flex flex-column">
+                            <p class="mb-0 fw-medium">Prénom</p>
+                            <p>Kenneth</p>
+                        </div>
                     </div>
-                </div>
-              </div>      
-
-                <div class="d-flex flex-row justify-content-between my-4">
-                    <h3>Coordonnées</h3>
-                </div>
-
-            <div class="d-flex flex-column w-75 mx-0">
-                <div class="row container">
-                    <div class="col-6 ps-0 ms-0 d-flex flex-column">
-                        <p class="mb-0 fw-medium">Numéro de téléphone</p>
-                        <p>+226 70 25 40 90</p>
+                  </div>
+                    <div class="d-flex flex-row justify-content-between my-4">
+                        <h3>Coordonnées</h3>
                     </div>
-                    
-                    <div class="col-6 d-flex flex-column">
-                        <p class="mb-0 fw-medium">E-mail</p>
-                        <p>kennethsidibe@gmail.com</p>
+                <div class="d-flex flex-column w-75 mx-0">
+                    <div class="row container">
+                        <div class="col-6 ps-0 ms-0 d-flex flex-column">
+                            <p class="mb-0 fw-medium">Numéro de téléphone</p>
+                            <p>+226 70 25 40 90</p>
+                        </div>
+            
+                        <div class="col-6 d-flex flex-column">
+                            <p class="mb-0 fw-medium">E-mail</p>
+                            <p>kennethsidibe@gmail.com</p>
+                        </div>
+                        <div class="col-6 ps-0 ms-0 d-flex flex-column">
+                            <p class="mb-0 fw-medium">Addresse</p>
+                            <p>450 route du baobab, Ouagadougou, Burkina Faso, A9C P9R</p>
+                        </div>
                     </div>
-
-                    <div class="col-6 ps-0 ms-0 d-flex flex-column">
-                        <p class="mb-0 fw-medium">Addresse</p>
-                        <p>450 route du baobab, Ouagadougou, Burkina Faso, A9C P9R</p>
-                    </div>
-
+                  </div>
                 </div>
               </div>
-            </div>
-
-          </div>
-          <!-- Profile Info -->
-
-          <hr style="width:80%;">
-
-          <div class="row p-4">
-              <h2 class="mb-4" >Réservation</h2>
-              <!-- Reservation Info -->
-              <style>
-                .info-name {
-                    color: #0700cf
-                }
-                .info-name + p {
-                    font-weight: 500;
-                }
-                      </style>
-                      <div class="d-flex flex-row">
-                <div class="yellow" style="height: 128px; width:128px;">
-                    <img src="images/room1.jpg" class="img-fluid hotel-img rounded-4" alt="">
-                </div>
-                <div class="ms-1 row gy-0 d-flex flex-column">
-                    <div class="d-flex " >
-                        <h4 style="margin-bottom: 0px;">Room Name</h4>
+              <!-- Profile Info -->
+              <hr style="width:80%;">
+              <div class="row p-4">
+                  <h2 class="mb-4" >Réservation</h2>
+                  <!-- Reservation Info -->
+                  <style>
+                    .info-name {
+                        color: #0700cf
+                    }
+                    .info-name + p {
+                        font-weight: 500;
+                    }
+                          </style>
+                          <div class="d-flex flex-row">
+                    <div class="yellow" style="height: 128px; width:128px;">
+                        <img src="images/room1.jpg" class="img-fluid hotel-img rounded-4" alt="">
                     </div>
-                    <h6 >Hotel name</h6>
-                    <p class="fw-light">Hotel localisation</p>
-                </div>
-                      </div>
-                      
-                      <div class="row my-5">
-                <div class="col d-flex flex-column">
-                    <p class="my-2 info-name">Arrivée</p>
-                    <p class="fs-5 reservation-date-info" >Lundi 02 Avril</p>
-                    <input type="date" name="arrivalDate" id="arrival-date" class="form-control hide" >
-                </div>
-                <div class="col d-flex flex-column align-items-center">
-                    <i class="bi bi-moon-stars fs-2 my-2"></i>
-                    <p class="fw-medium">10 Nuits</p>
-                </div>
-                <div class="col d-flex flex-column align-items-end">
-                    <p class="info-name">Départ</p>
-                    <p class="fs-5 reservation-date-info" >Mardi 10 Avril</p>
-                    <input type="date" name="arrivalDate" id="departure-date" class="form-control hide" >
-                </div>
-                      </div>
-                <div class="d-flex justify-content-center">
+                    <div class="ms-1 row gy-0 d-flex flex-column">
+                        <div class="d-flex " >
+                            <h4 style="margin-bottom: 0px;">Room Name</h4>
+                        </div>
+                        <h6 >Hotel name</h6>
+                        <p class="fw-light">Hotel localisation</p>
+                    </div>
+                          </div>
+            
+                          <div class="row my-5">
+                    <div class="col d-flex flex-column">
+                        <p class="my-2 info-name">Arrivée</p>
+                        <p class="fs-5 reservation-date-info" >Lundi 02 Avril</p>
+                        <input type="date" name="arrivalDate" id="arrival-date" class="form-control hide" >
+                    </div>
+                    <div class="col d-flex flex-column align-items-center">
+                        <i class="bi bi-moon-stars fs-2 my-2"></i>
+                        <p class="fw-medium">10 Nuits</p>
+                    </div>
+                    <div class="col d-flex flex-column align-items-end">
+                        <p class="info-name">Départ</p>
+                        <p class="fs-5 reservation-date-info" >Mardi 10 Avril</p>
+                        <input type="date" name="arrivalDate" id="departure-date" class="form-control hide" >
+                    </div>
+                          </div>
+                    <div class="d-flex justify-content-center">
+                        <hr>
+                    </div>
+                          <div class="row my-5">
+                    <div class="col d-flex flex-column">
+                        <p class="my-2 info-name" >Chambres & Personnes</p>
+                        <p class="fs-5" >2 Personnes (1 chambre)</p>
+                    </div>
+                    <div class="col d-flex flex-column align-items-end">
+                        <p class="info-name" >Prix/Nuit</p>
+                        <p>150$</p>
+                    </div>
+                          </div>
+                          <div class="d-flex justify-content-center">
                     <hr>
-                </div>
-                      <div class="row my-5">
-                <div class="col d-flex flex-column">
-                    <p class="my-2 info-name" >Chambres & Personnes</p>
-                    <p class="fs-5" >2 Personnes (1 chambre)</p>
-                </div>
-                <div class="col d-flex flex-column align-items-end">
-                    <p class="info-name" >Prix/Nuit</p>
-                    <p>150$</p>
-                </div>
-                      </div>
-                      <div class="d-flex justify-content-center">
-                <hr>
-                      </div>
-                      <div class="row my-5">
-                <div class="col d-flex flex-column">
-                    <p class="my-2 info-name">Commodité</p>
-                    <p class="fs-5">Machine à café</p>
-                </div>
-                <div class="col d-flex flex-column justify-content-center align-items-end">
-                    <i class="bi bi-cup-hot fs-1"></i>
-                </div>
-                      </div>
-                      <div class="row my-5">
-                <div class="col d-flex flex-column">
-                    <p class="my-2 info-name">Extensions</p>
-                    <p class="fs-5">Balcon chauffé</p>
-                </div>
-                <div class="col d-flex flex-column justify-content-center align-items-end">
-                    <i class="bi bi-door-open-fill fs-1"></i>
-                </div>
-                      </div>
-                      <div class="row my-5">
-                <div class="col d-flex flex-column">
-                    <p class="my-2 info-name">Vue</p>
-                    <p class="fs-5">Sur la mer</p>
-                </div>
-                <div class="col d-flex flex-column justify-content-center align-items-end">
-                    <i class="fa-solid fa-umbrella-beach fs-1"></i>
-                </div>
-                      </div>
-                      <div class="d-flex justify-content-center">
-                <hr>
-                      </div>
-                  
-                      <div class="row mt-5">
-                <div class="col d-flex flex-column">
-                    <p class="my-2 info-name fw-bold" >Total price:</p>
-                </div>
-                <div class="col d-flex flex-column align-items-end">
-                    <h2 class="my-0" >1200$</h2>
-                    <p class="fw-light" >10 nuits</p>
-                </div>
-                      </div>
-                      <div class="d-flex gap-5 flex-row justify-content-center align-items-center">
-                <button type="button" id="modifyBtn" class="btn btn-dark fs-4 rounded-4">
-                    Réserver la chambre
-                </button>
-                      </div>
-                      <!-- Reservation Info -->
-          </div>
+                          </div>
+                          <div class="row my-5">
+                    <div class="col d-flex flex-column">
+                        <p class="my-2 info-name">Commodité</p>
+                        <p class="fs-5">Machine à café</p>
+                    </div>
+                    <div class="col d-flex flex-column justify-content-center align-items-end">
+                        <i class="bi bi-cup-hot fs-1"></i>
+                    </div>
+                          </div>
+                          <div class="row my-5">
+                    <div class="col d-flex flex-column">
+                        <p class="my-2 info-name">Extensions</p>
+                        <p class="fs-5">Balcon chauffé</p>
+                    </div>
+                    <div class="col d-flex flex-column justify-content-center align-items-end">
+                        <i class="bi bi-door-open-fill fs-1"></i>
+                    </div>
+                          </div>
+                          <div class="row my-5">
+                    <div class="col d-flex flex-column">
+                        <p class="my-2 info-name">Vue</p>
+                        <p class="fs-5">Sur la mer</p>
+                    </div>
+                    <div class="col d-flex flex-column justify-content-center align-items-end">
+                        <i class="fa-solid fa-umbrella-beach fs-1"></i>
+                    </div>
+                          </div>
+                          <div class="d-flex justify-content-center">
+                    <hr>
+                          </div>
+            
+                          <div class="row mt-5">
+                    <div class="col d-flex flex-column">
+                        <p class="my-2 info-name fw-bold" >Total price:</p>
+                    </div>
+                    <div class="col d-flex flex-column align-items-end">
+                        <h2 class="my-0" >1200$</h2>
+                        <p class="fw-light" >10 nuits</p>
+                    </div>
+                          </div>
+                          <div class="d-flex gap-5 flex-row justify-content-center align-items-center">
+                    <button type="button" id="modifyBtn" class="btn btn-dark fs-4 rounded-4">
+                        Réserver la chambre
+                    </button>
+                          </div>
+                          <!-- Reservation Info -->
+              </div>
+        </form>
     </div>
     
 
