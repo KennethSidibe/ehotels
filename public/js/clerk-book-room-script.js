@@ -50,7 +50,7 @@ $(document).ready(() => {
         let priceString = $(cardClicked).find('.price-digit').text();
         enabledCardPrice = parseInt(priceString);
         //set the price of the hidden input
-        $('#room-price').val(enabledCardPrice);
+        $('#roomPriceInput').val(enabledCardPrice);
 
         $('.card-room').not(cardClicked).each(function() {
             $(this).addClass('disabled');
@@ -64,7 +64,7 @@ $(document).ready(() => {
     function enableOtherCards(cardClicked) {
         enabledCardPrice = 0;
         //set the price of the hidden input
-        $('#room-price').val(enabledCardPrice);
+        $('#roomPriceInput').val(enabledCardPrice);
 
         $('.card-room').not(cardClicked).each(function() {
             $(this).removeClass('disabled');
@@ -102,7 +102,7 @@ $(document).ready(() => {
     // ----------------- Current date for arrival Date Picker -------------------
 
     var currentDate = new Date().toISOString().split('T')[0];
-    $('#arrival-date')[0].value = currentDate;
+    $('#arrivalDateInput')[0].value = currentDate;
 
     // ----------------- Current date for arrival Date Picker -------------------
     

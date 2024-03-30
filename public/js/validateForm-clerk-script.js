@@ -158,6 +158,15 @@ $(document).ready(function() {
         element.addClass('hide');
         element.text('');
     }
+
+    function validateRoomPrice(roomPrice, roomPriceErrorMsg, roomPriceErrorId, roomPriceInputId) {
+        if(parseInt(roomPrice) === 'NaN' || roomPrice <= 0) {
+            showError(roomPriceErrorId, roomPriceErrorMsg, roomPriceInputId);
+            return false;
+        }
+        hideError(roomPriceErrorId);
+        return true;
+    }
     
     $('#submitFormBtn').click(function() {
         $('#bookRoomForm').submit();
@@ -176,11 +185,13 @@ $(document).ready(function() {
         let formCity = $('#'+ CITY_INPUT_ID).val();
         let formCountry = $('#'+ COUNTRY_INPUT_ID).val();
         let formZip = $('#'+ ZIP_CODE_INPUT_ID).val();
+        let formRoomPrice = $('#' + ROOM_PRICE_INPUT_ID).val();
     
         // validate the form
-        let arrivalDateValid = validateArrivalAndDepartureDate(formArrivalDate, formDepartureDate, ARRIVAL_DATE_ERROR_ID, 
+        let stayDatesValid = validateArrivalAndDepartureDate(formArrivalDate, formDepartureDate, ARRIVAL_DATE_ERROR_ID, 
                                 DEPARTURE_DATE_ERROR_ID, ARRIVAL_DATE_INPUT_ID, ARRIVAL_DATE_ERROR_ID);
 
+        let roomPriceValid = validateRoomPrice(formRoomPrice, ROOM_PRICE_REQUIRED, ROOM_PRICE_ERROR_ID, ROOM_PRICE_INPUT_ID);
         let firstNameValid = hasValue(formFirstName, FIRST_NAME_REQUIRED, FIRST_NAME_ERROR_ID, FIRST_NAME_INPUT_ID);
         let lastNameValid = hasValue(formLastName, LAST_NAME_REQUIRED, LAST_NAME_ERROR_ID, LAST_NAME_INPUT_ID);
         let emailValid = validateEmail(formEmail, EMAIL_REQUIRED, EMAIL_INVALID, EMAIL_ERROR_ID, EMAIL_INPUT_ID);
@@ -192,7 +203,9 @@ $(document).ready(function() {
         let countryValid = validateCountry(formCountry, COUNTRY_INVALID, COUNTRY_ERROR_ID, COUNTRY_INPUT_ID);
     
         // if valid, submit the form.
-        if (firstNameValid && lastNameValid && emailValid && pwdValid && phoneValid && streetNameValid && countryValid && cityValid && zipValid) {
+        if (stayDatesValid && roomPriceValid && firstNameValid 
+            && lastNameValid && emailValid && pwdValid && phoneValid 
+            && streetNameValid && countryValid && cityValid && zipValid) {
             console.log("form data valid, submitting");
         } else {
             event.preventDefault();
@@ -203,19 +216,21 @@ $(document).ready(function() {
         }
     });
     
-    const FIRST_NAME_REQUIRED = "S'il-te-plaît, Entre ton prénom";
-    const LAST_NAME_REQUIRED = "S'il-te-plaît, Entre ton nom";
-    const EMAIL_REQUIRED = "S'il-te-plaît, entre ton email";
-    const EMAIL_INVALID = "S'il-te-plaît, entre une addresse e-mail correcte";
-    const PWD_INVALID = "S'il-te-plaît, entre mot de passe sécurisé (nombres, longueur min 6 et un caractère spécial inclus)";
-    const PHONE_NUMBER_REQUIRED = "S'il-te-plaît, entre ton numéro de téléphone";
-    const PHONE_INVALID = "S'il-te-plaît, entre un numéro de téléphone valide";
-    const STREET_INVALID = "S'il-te-plaît, entre ta rue";
-    const CITY_INVALID = "S'il-te-plaît, entre ta ville";
-    const COUNTRY_INVALID = "S'il-te-plaît, entre ton pays";
-    const ZIP_INVALID = "S'il-te-plaît, entre ton code postale";
+    const ROOM_PRICE_REQUIRED = "S'il te plaît, choisi une chambre."
+    const FIRST_NAME_REQUIRED = "S'il te plaît, Entre ton prénom";
+    const LAST_NAME_REQUIRED = "S'ilte plaît, Entre ton nom";
+    const EMAIL_REQUIRED = "S'il te plaît, entre ton email";
+    const EMAIL_INVALID = "S'il te plaît, entre une addresse e-mail correcte";
+    const PWD_INVALID = "S'il te plaît, entre mot de passe sécurisé (nombres, longueur min 6 et un caractère spécial inclus)";
+    const PHONE_NUMBER_REQUIRED = "S'il te plaît, entre ton numéro de téléphone";
+    const PHONE_INVALID = "S'il te plaît, entre un numéro de téléphone valide";
+    const STREET_INVALID = "S'il te plaît, entre ta rue";
+    const CITY_INVALID = "S'il te plaît, entre ta ville";
+    const COUNTRY_INVALID = "S'il te plaît, entre ton pays";
+    const ZIP_INVALID = "S'il te plaît, entre ton code postale";
     
     const ARRIVAL_DATE_ERROR_ID = 'arrivalDateError';
+    const ROOM_PRICE_ERROR_ID = 'roomError';
     const DEPARTURE_DATE_ERROR_ID = 'departureDateError';
     const FIRST_NAME_ERROR_ID = 'firstNameError';
     const LAST_NAME_ERROR_ID = 'lastNameError';
@@ -228,6 +243,7 @@ $(document).ready(function() {
     const ZIP_CODE_ERROR_ID = 'zipCodeError';
     
     const ARRIVAL_DATE_INPUT_ID = 'arrivalDateInput';
+    const ROOM_PRICE_INPUT_ID = 'roomPriceInput'
     const DEPARTURE_DATE_INPUT_ID = 'departureDateInput';
     const FIRST_NAME_INPUT_ID = 'firstNameInput';
     const LAST_NAME_INPUT_ID = 'lastNameInput';
