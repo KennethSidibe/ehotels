@@ -142,6 +142,7 @@ app.get('/book', async (req, res) => {
     let stayPrice = parseInt(currentRoomSelected.price) * numberOfNights;
     currentStayPrice = stayPrice;
     currentPersonString = getPersonString(currentRoomSelected.capacity);
+
     let bookPageData = {
         hotelName:currentHotelSelected.name,
         roomName:currentRoomSelected.room_name,
@@ -158,6 +159,27 @@ app.get('/book', async (req, res) => {
 
     res.render('book-room.ejs',{data:bookPageData});
 
+});
+
+app.get('/login', async(req, res) => {
+    res.render('user-login.ejs');
+});
+
+app.post('/login', async(req, res) => {
+    const email = (req.body.email);
+    const pwd = (req.body.pwd);
+
+    let client = await verifyLoginEmail(email);
+    let isPwdValid = await verifyPassword(pwd, client.pwd);
+    if (client.length <= 0 || !isPwdValid) {
+        console.log('Failed to log in, pwd dont match');
+        res.redirect('/login?unsuccessful');
+    } 
+
+    console.log("Client logged succesfully");
+    currentLoggedClientData = client;
+    res.render('user-profile.ejs', {data:currentLoggedClientData});
+    
 });
 
 app.post('/rooms', async (req, res) => {
@@ -425,10 +447,16 @@ let testReservationData = {
     clientId: 3,
     stayPrice: 200
 };
+// Clerk Booking Data
 let clerkBookClientData = {};
 let clerkBookReservationData = {};
 let clerkConfirmDetails = {};
 let clerkCurrentHotelData = {};
+// Clerk Booking Data
+
+// User Logged Data
+let currentLoggedClientData = {};
+// User Logged Data
 
 // --------------- ** DATA ** -----------------
 
@@ -501,6 +529,11 @@ async function createClient(clientData) {
     } catch (error) {
         console.error("Error inserting new client:", error.message);
     }
+}
+
+async function loginUser(userData) {
+    // if()
+    console.log('hello');
 }
 
 async function createReservation(reservationData) {
@@ -597,19 +630,42 @@ function replaceDashesWithSlashes(dateString) {
     return dateString.replace(/-/g, '/');
 }
 
+async function verifyLoginEmail(email) {
+    const query = 'select * from clients where email = $1';
+    const paramValues = [email.toLowerCase()];
+
+    try {
+        let result = await db.query(query, paramValues);
+        if(result.rows.length > 0) {
+            console.log("Client exists");
+            return result.rows[0];
+        } else {
+            console.log('Email is invalid');
+            return [];
+        }
+    } catch (error) {
+        console.error("Error while querying clients for login", error.stack);
+        throw error;
+        return [];
+    }
+
+}
+
 async function verifyPassword(password, hashedPassword) {
     try {
         const match = await bcrypt.compare(password, hashedPassword);
-        if (match) {
-            console.log('Passwords match');
-        } else {
-            console.log('Passwords do not match');
-        }
+        // if (match) {
+        //     console.log('Passwords match');
+        // } else {
+        //     console.log('Passwords do not match');
+        // }
         return match;
     } catch (error) {
         console.error('Error verifying password:', error);
     }
 }
+let testHashPwd = await hashPassword('1234567890');
+let testVerifPwd = await verifyPassword('123456790', '$2b$10$sXG30jHjz.KXOfqVPkoVyerRFsLs.6lZYoKHCJRzzwBzPbI81dONC');
 
 function convertDateForDbInsert(dateString) {
     const parts = dateString.split("/");
