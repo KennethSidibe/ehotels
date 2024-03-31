@@ -76,11 +76,17 @@
             <!-- User Quick View -->
           <div class="my-4 p-4 rounded-container rounded-4">
             <h6 class="mb-0">Salut, Moussa</h6>
-            <p>moussasidibe@gmail.com</p>
+            <p><%= data.email %></p>
 
             <div class="icons-container pt-3 d-flex flex-row justify-content-between">
-              <p style="font-size: small;" >Prochaine Réservation: </p>
-              <p><strong>15 Apr - 20 Apr</strong></p>
+              <% if(data.nextReservation === 'undefined') { %>
+                <p style="font-size: small;" >Aucune réservation en vue </p>
+                <p><strong>👀</strong></p>
+              <% } else { %>
+                <p style="font-size: small;" >Prochaine Réservation: </p>
+                <p><strong><%= data.nextReservation %></strong></p>
+              <% } %>
+
             </div>
           </div>
           <!-- User Quick View -->
@@ -122,7 +128,7 @@
             </style>
             <div class="d-flex flex-row">
               <div class="row">
-                <h3>Kenneth Sidibe</h3>
+                <h3><%= capitalizeFirstLetter(data.first_name) %> <%= capitalizeFirstLetter(data.last_name) %></h3>
               </div>
             </div>
             <div class="row mt-5">
@@ -135,12 +141,12 @@
                 <div class="row container">
                     <div class="col-6 ps-0 ms-0 d-flex flex-column">
                         <p class="mb-0 fw-medium">Nom</p>
-                        <p>Sidibe</p>
+                        <p><%= capitalizeFirstLetter(data.last_name) %></p>
                     </div>
                     
                     <div class="col-6 d-flex flex-column">
                         <p class="mb-0 fw-medium">Prénom</p>
-                        <p>Kenneth</p>
+                        <p><%= capitalizeFirstLetter(data.first_name) %></p>
                     </div>
                 </div>
               </div>      
@@ -153,17 +159,17 @@
                 <div class="row container">
                     <div class="col-6 ps-0 ms-0 d-flex flex-column">
                         <p class="mb-0 fw-medium">Numéro de téléphone</p>
-                        <p>+226 70 25 40 90</p>
+                        <p><%= data.phone_number %></p>
                     </div>
                     
                     <div class="col-6 d-flex flex-column">
                         <p class="mb-0 fw-medium">E-mail</p>
-                        <p>kennethsidibe@gmail.com</p>
+                        <p><%= data.email.toLowerCase() %></p>
                     </div>
 
                     <div class="col-6 ps-0 ms-0 d-flex flex-column">
                         <p class="mb-0 fw-medium">Addresse</p>
-                        <p>450 route du baobab, Ouagadougou, Burkina Faso, A9C P9R</p>
+                        <p><%= data.address %></p>
                     </div>
 
                 </div>
@@ -178,5 +184,10 @@
 
     <!-- Boostrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+      function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+    </script>
   </body>
 </html>
