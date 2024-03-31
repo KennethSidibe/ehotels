@@ -374,66 +374,31 @@ async function updateUserInfo(userData) {
 app.get("/edit-info", async (req, res) => {
 
     console.log(`client data: ${JSON.stringify(currentLoggedClientData, null, 2)}`);
-    // let addressObject = extractStreetNameCityCountry(currentLoggedClientData.address);
-    // let streetName = addressObject.streetName;
-    // let city = addressObject.city;
-    // let country = addressObject.country;
-    // let zipCode = addressObject.zipCode;
-    let testClientData = {
-      "id": 24,
-      "first_name": "moussa",
-      "last_name": "sidibe",
-      "address": "502 tuerie des points, Ouaga, FR, Q8O P8A",
-      "created_at": "2024-03-30T12:28:59.294Z",
-      "email": "amadou@ken.com",
-      "phone_number": "(543) 923-9029",
-      "pwd": "",
-      "nextReservation": "undefined",
-      "reservations": [
-        {
-          "id": 14,
-          "room_id": 59,
-          "arrival_date": "2024-03-30T04:00:00.000Z",
-          "client_id": 24,
-          "created_at": "2024-03-30T12:28:59.297Z",
-          "departure_date": "2024-04-05T04:00:00.000Z",
-          "price": 3000,
-          "hotel": {
-            "hotel_name": "La place des hommes fidèles",
-            "address": "102 route des fidèles, Ouagadougou, Burkina Faso, B2O 7V7",
-            "category": "Relaxation",
-            "room": {
-              "id": 59,
-              "room_type": "luxe",
-              "price": 500,
-              "commodity": null,
-              "capacity": 2,
-              "view": null,
-              "extensions": null,
-              "repairs": null,
-              "hotel_id": 10,
-              "hotel_chain_id": 3,
-              "room_number": 901,
-              "room_floor": 9,
-              "number_of_rooms_for": 40,
-              "room_name": "standard"
-            }
-          }
-        }
-      ]
-    };
-    testClientData['street_name'] = '101 La rue des typeshit';
-    testClientData['city'] = ' ouaga';
-    testClientData['country'] = 'FR';
-    testClientData['zipCode'] = 'F5U Z7Z';
-    // currentLoggedClientData['street_name'] = streetName;
-    // currentLoggedClientData['city'] = city;
-    // currentLoggedClientData['country'] = country;
-    // currentLoggedClientData['zipCode'] = zipCode;
-    testClientData['first_name'] = '';
-    testClientData['last_name'] = '';
-    testClientData['email'] = '';
+    let addressObject = extractStreetNameCityCountry(currentLoggedClientData.address);
+    let streetName = addressObject.streetName;
+    let city = addressObject.city;
+    let country = addressObject.country;
+    let zipCode = addressObject.zipCode;
+
+    currentLoggedClientData['street_name'] = streetName;
+    currentLoggedClientData['city'] = city;
+    currentLoggedClientData['country'] = country;
+    currentLoggedClientData['zipCode'] = zipCode;
   res.render("modify-profile.ejs", {data:testClientData, capitalizeFirstLetter:capitalizeFirstLetter});
+});
+
+app.get('/delete-reserv', async(req, res) => {
+  let reservToDeleteId = currentReservationSelectedData['id'];
+  let didDropWork = await dropReservation(reservToDeleteId);
+  if(didDropWork) {
+    currentReservationSelectedData = [];
+    currentLoggedClientData['reservations'].splice(currentReservSelectedIndex, 1);
+    currentReservSelectedIndex = -1;
+    res.redirect('/reservations?successful');
+    return;
+  }
+  res.redirect('/reservations?unsuccessful');
+  return;
 });
 
 app.get("/clerk-book", async (req, res) => {
@@ -553,6 +518,8 @@ app.get("/reserv-details", async (req, res) => {
   let personString = getPersonString(parseInt(reservSelected.hotel.room.capacity));
   reservSelected['personString'] = personString;
 
+  console.log(`Reserv Selected object: ${JSON.stringify(reservSelected, null, 2)}`);
+
   currentReservationSelectedData = reservSelected;
   currentReservSelectedIndex = reservSelectedId;
 
@@ -667,6 +634,24 @@ async function getHotelRooms(hotelId) {
   } catch (error) {
     console.error("Error while querying hotels list", error.stack);
   }
+}
+
+async function dropReservation(reservationId) {
+  const query = `DELETE FROM reservations WHERE id = $1`;
+  const paramValues = [reservationId];
+
+  try {
+    const result = await db.query(query, paramValues);
+    if(result.rowCount > 0) {
+      console.log(`Successfully dropped reservation`);
+      return true;
+    } 
+    console.log(`Failed to dropped reservation`);
+    return false;
+  } catch (error) {
+    console.error(`Error while deleting row: ${error.stack}`);
+  }
+
 }
 
 async function getHotelData(hotelId) {
