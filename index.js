@@ -174,12 +174,14 @@ app.post("/user", async (req, res) => {
     console.log(`user reservations: ${JSON.stringify(userReservations, null, 2)}`);
     let closestReservationString = getClosetReservationString(userReservations);
     currentLoggedClientData = client;
+    currentLoggedClientData['reservations'] = userReservations;
     currentLoggedClientData['nextReservation'] = closestReservationString;
     
     console.log(`Client data: ${JSON.stringify(currentLoggedClientData, null, 2)}`);
 
-
     res.render("user-profile.ejs", { data: currentLoggedClientData, capitalizeFirstLetter:capitalizeFirstLetter });
+    
+    return;
   }
 
   currentLoggedClientData = client;
@@ -189,7 +191,8 @@ app.post("/user", async (req, res) => {
   console.log(`Client data: ${JSON.stringify(currentLoggedClientData, null, 2)}`);
   
   res.render("user-profile.ejs", { data: currentLoggedClientData, capitalizeFirstLetter:capitalizeFirstLetter });
-  
+  return;
+
 });
 
 app.post("/rooms", async (req, res) => {
@@ -384,7 +387,7 @@ app.get("/edit-info", async (req, res) => {
     currentLoggedClientData['city'] = city;
     currentLoggedClientData['country'] = country;
     currentLoggedClientData['zipCode'] = zipCode;
-  res.render("modify-profile.ejs", {data:testClientData, capitalizeFirstLetter:capitalizeFirstLetter});
+  res.render("modify-profile.ejs", {data:currentLoggedClientData, capitalizeFirstLetter:capitalizeFirstLetter});
 });
 
 app.get('/delete-reserv', async(req, res) => {
@@ -546,7 +549,7 @@ app.get("/modify", async (req, res) => {
   res.render("modify-profile.ejs");
 });
 app.get("/user", async (req, res) => {
-  res.render("user-profile.ejs");
+  res.render("user-profile.ejs", { data: currentLoggedClientData, capitalizeFirstLetter:capitalizeFirstLetter });
 });
 
 app.get("/room", async (req, res) => {
