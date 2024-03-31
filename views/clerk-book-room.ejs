@@ -100,7 +100,7 @@
             <div class="mb-5 d-flex flex-row">
               <div class="row">
                 <h3 class="mb-0">Réserve Une chambre</h3>
-                <p class="text-body-tertiary">Employee: Kenneth Sidibe</p>
+                <p class="text-body-tertiary">Employee: <%= data.employee.first_name %> <%= data.employee.last_name %></p>
               </div>
             </div>
             <!--  -->
@@ -126,7 +126,6 @@
                     id="arrivalDateInput"
                     class="form-control"
                     name="arrivalDate"
-                    value="2024-04-01"
                     placeholder="Moussa"
                   />
                   <div
@@ -143,7 +142,6 @@
                     id="departureDateInput"
                     class="form-control"
                     name="departureDate"
-                    value="2024-04-05"
                     value="moussa"
                     placeholder="Moussa"
                   />
@@ -197,7 +195,6 @@
                     class="form-control"
                     name="firstName"
                     id="firstNameInput"
-                    value="moussa"
                     placeholder="Moussa"
                   />
                   <div
@@ -213,7 +210,6 @@
                     type="text"
                     class="form-control"
                     name="lastName"
-                    value="sidibe"
                     placeholder="Sidibe"
                     id="lastNameInput"
                   />
@@ -230,7 +226,6 @@
                     type="email"
                     class="form-control"
                     name="email"
-                    value="ken@ken.com"
                     id="emailInput"
                     placeholder="moussasidibe@gmail.com"
                   />
@@ -245,7 +240,6 @@
                     type="password"
                     class="form-control"
                     name="pwd"
-                    value="KenSUperPwd123!?@"
                     id="pwdInput"
                     placeholder=""
                   />
@@ -263,7 +257,6 @@
                   <input
                     type="tel"
                     id="phone"
-                    value="(543) 923-9029"
                     class="form-control"
                     name="phoneNumber"
                     placeholder=""
@@ -282,7 +275,6 @@
                     id="streetNameInput"
                     class="form-control"
                     name="streetName"
-                    value="502 tuerie des points"
                     placeholder="506 rue des Marquis"
                   />
                   <div
@@ -296,7 +288,6 @@
                     type="text"
                     id="cityInput"
                     class="form-control"
-                    value="Ouaga"
                     name="city"
                     placeholder="Ouagadougou"
                   />
@@ -585,7 +576,6 @@
                     type="text"
                     id="zipCodeInput"
                     class="form-control"
-                    name="zipCode"
                     value="Q8O P8A"
                     placeholder="A9C 7R0"
                   />

@@ -58,7 +58,7 @@
         
         <form action="/clerk-create-reserv" method="post">
             <h2 style="margin-bottom: 0px;" >Confirmation de réservation</h2>
-            <p class="text-secondary" style="font-size: 0.95em">Employee: Kenneth Sidibe</p>
+            <p class="text-secondary" style="font-size: 0.95em">Employee: <%= employeeData.first_name %> <%= employeeData.last_name %></p>
             <!-- Profile Info -->
             <div class="my-4 p-4 ">
             
@@ -120,7 +120,7 @@
                     </div>
                     <div class="ms-1 row gy-0 d-flex flex-column">
                         <div class="d-flex " >
-                            <h4 style="margin-bottom: 0px;">Room Name</h4>
+                            <h4 style="margin-bottom: 0px;"><%= reservData.roomName %></h4>
                         </div>
                         <h6><%= reservData.hotelName %></h6>
                         <p class="fw-light">H<%= reservData.hotelLocation %></p>

@@ -544,9 +544,16 @@ app.get('/delete-reserv', async(req, res) => {
 });
 
 app.get("/clerk-book", async (req, res) => {
-  let clerkHotelData = await getHotelData(10);
+
+  let hotelId = parseInt(req.query.id);
+  let clerkHotelData = await getHotelData(hotelId);
 
   clerkCurrentHotelData = clerkHotelData;
+  let employeeData = {
+    first_name:currentLoggedEmployeeData['first_name'],
+    last_name:currentLoggedEmployeeData['last_name']
+  };
+  clerkCurrentHotelData['employee'] = employeeData;
 
   console.log(
     `Clerk hotel data: ${JSON.stringify(clerkCurrentHotelData, null, 2)}`
@@ -565,7 +572,7 @@ app.post("/clerk-create-reserv", async (req, res) => {
 
   console.log(`New reservation created: ${currentReservationId}`);
 
-  res.redirect("/?successful");
+  res.redirect("employee/?successful");
 });
 
 app.post("/clerk-confirm", async (req, res) => {
@@ -642,11 +649,18 @@ app.post("/clerk-confirm", async (req, res) => {
     personString: personString,
   };
 
+  let employeeData = {
+    first_name:currentLoggedEmployeeData['first_name'],
+    last_name:currentLoggedEmployeeData['last_name']
+  };
+
   clerkBookReservationData = reservationData;
+  clerkBookReservationData['roomName'] = reservRoomName;
 
   res.render("clerk-confirm-client.ejs", {
     clientData: clerkBookClientData,
     reservData: clerkBookReservationData,
+    employeeData: employeeData
   });
 });
 app.get("/reserv-details", async (req, res) => {
