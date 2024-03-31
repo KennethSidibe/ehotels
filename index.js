@@ -195,6 +195,49 @@ app.post("/user", async (req, res) => {
 
 });
 
+app.get('/employee', (req, res) => {
+  res.render('employee-profile.ejs', 
+  {
+    data:currentLoggedEmployeeData,
+    capitalizeFirstLetter:capitalizeFirstLetter
+  });
+}); 
+
+app.post('/employee', async(req, res) => {
+  let email = req.body.email;
+  let pwd = req.body.pwd;
+  let employee = await verifyLoginEmployeeEmail(email);
+  console.log(`employee data: ${JSON.stringify(employee, null, 2)}`);
+  if(employee.hasOwnProperty('id')) {
+
+    let isPwdValid = await verifyPassword(pwd, employee.pwd);
+    
+    if(isPwdValid) {
+      let hotelData = await getHotelData(employee.hotel_id);
+      currentLoggedEmployeeData = employee;
+      currentLoggedEmployeeData['hotel'] = hotelData;
+      currentLoggedEmployeeData['employeeSince'] = getYearFromDate(employee.created_at);
+      currentLoggedEmployeeData['nas'] = formatNumberString(employee.nas);
+      console.log(`Employee successfully logged in! data: ${JSON.stringify(currentLoggedEmployeeData, null, 2)}`);
+      res.render('employee-profile.ejs', 
+      {
+        data:currentLoggedEmployeeData, 
+        capitalizeFirstLetter:capitalizeFirstLetter
+      });
+      return;
+    }
+    console.log(`Password invalid`);
+    res.redirect('/employee-login?unsuccessful');
+    return;
+  }
+
+  console.log(`Could not find employee`);
+  res.redirect('/employee-login?unsuccessful');
+  return;
+  
+});
+
+
 app.post("/rooms", async (req, res) => {
   userArrivalDate = req.body.arrivalDate;
   userDepartureDate = req.body.departureDate;
@@ -211,6 +254,10 @@ app.post("/rooms", async (req, res) => {
 
   res.render("hotels-list.ejs", { data: hotelsListData });
 });
+
+app.get('/employee-login', (req, res) => {
+  res.render('employee-login.ejs');
+})
 
 app.get("/pick-date", async (req, res) => {
   res.render("pick-reservation-date.ejs");
@@ -295,6 +342,52 @@ app.post('/update-user', async (req, res) => {
 
 });
 
+app.post('/update-employee', async(req, res) => {
+  
+  let employeeId = currentLoggedEmployeeData['id'];
+  let firstName = req.body.firstName;
+  let lastName = req.body.lastName;
+  let email = req.body.email;
+  let phoneNumber = req.body.phoneNumber;
+  console.log(`Phone number body: ${phoneNumber}`);
+  let streetName = req.body.streetName;
+  let city = req.body.city;
+  let country = req.body.country;
+  let zipCode = req.body.zipCode;
+
+  let employeeData = {
+    id:employeeId,
+    first_name: firstName,
+    last_name:lastName,
+    email: email,
+    phone_number:phoneNumber,
+    street_name:streetName,
+    city: city,
+    country:country,
+    zipCode:zipCode
+  };
+
+  let didUpdateWork = await updateEmployeeInfo(employeeData);
+
+  if(didUpdateWork) {
+    currentLoggedEmployeeData['first_name'] = firstName;
+    currentLoggedEmployeeData['last_name'] = lastName;
+    currentLoggedEmployeeData['address'] = `${streetName}, ${city}, ${country}, ${zipCode}`;
+    currentLoggedEmployeeData['email'] = email;
+    currentLoggedEmployeeData['phone_number'] = phoneNumber;
+
+    res.redirect('/successful-modify-employee-profile');
+    return;
+  } else {
+    res.redirect('/login');
+    return;
+  }
+});
+
+app.get('/successful-modify-employee-profile', (req,res) => {
+  res.redirect('/employee?successful');
+});
+
 app.post('/update-user-reserv', async(req, res) => {
   
   let arrivalDate = req.body.arrivalDate;
@@ -373,6 +466,52 @@ async function updateUserInfo(userData) {
       return false;
     }
 }
+
+async function updateEmployeeInfo(employeeData) {
+  const query = `UPDATE employees 
+    SET first_name = $1, last_name = $2, email = $3, phone_number = $4, address = $5
+    WHERE id = $6`;
+    let fullAddress = `${employeeData.street_name}, ${employeeData.city}, ${employeeData.country}, ${employeeData.zipCode}`;
+    const paramValues = [employeeData.first_name, employeeData.last_name, employeeData.email, employeeData.phone_number, fullAddress, employeeData.id];
+
+    try {
+      const result = await db.query(query, paramValues);
+      if(result.rowCount <= 0 ) {
+        // No rows Updated
+        return false;
+      }
+      
+      // row was updated 
+      return true;
+    } catch (error) {
+      console.error(`Error while updating user profile : ${error.stack}`);
+      return false;
+    }
+}
+
+
+
+app.get('/edit-employee-info', (req, res) => {
+  console.log(`Employee data: ${JSON.stringify(currentLoggedEmployeeData, null, 2)}`);
+  let addressObject = extractStreetNameCityCountry(currentLoggedEmployeeData.address);
+  let streetName = addressObject.streetName;
+  let city = addressObject.city;
+  let country = addressObject.country;
+  let zipCode = addressObject.zipCode;
+
+  currentLoggedEmployeeData['street_name'] = streetName;
+  currentLoggedEmployeeData['city'] = city;
+  currentLoggedEmployeeData['country'] = country;
+  currentLoggedEmployeeData['zipCode'] = zipCode;
+  res.render("modify-employee-profile.ejs", {
+    data:currentLoggedEmployeeData,
+    capitalizeFirstLetter:capitalizeFirstLetter
+  });
+
+});
+
+
+
 
 app.get("/edit-info", async (req, res) => {
 
@@ -619,6 +758,11 @@ let currentClientReservationsData = {};
   let currentReservSelectedIndex = 0;
 // User Logged Data
 
+// Employee Login Data 
+let currentLoggedEmployeeData = {};
+// Employee Login Data 
+
+
 // --------------- ** DATA ** -----------------
 
 // --------------- ** METHODS ** --------------------
@@ -665,12 +809,6 @@ async function getHotelData(hotelId) {
     const hotelResult = await db.query(hotelQuery, hotelParamValues);
     const hotelRooms = await getHotelRooms(hotelId);
     if (hotelResult.rows.length > 0 && hotelRooms.length > 0) {
-      console.log(
-        `test getting Hotel Data: ${JSON.stringify(hotelResult.rows, null, 2)}`
-      );
-      console.log(
-        `test getting RoomHotels Data: ${JSON.stringify(hotelRooms, null, 2)}`
-      );
       let hotelData = hotelResult.rows[0];
       hotelData["rooms"] = hotelRooms;
       return hotelData;
@@ -713,11 +851,6 @@ async function createClient(clientData) {
   } catch (error) {
     console.error("Error inserting new client:", error.message);
   }
-}
-
-async function loginUser(userData) {
-  // if()
-  console.log("hello");
 }
 
 async function createReservation(reservationData) {
@@ -866,99 +999,6 @@ async function getHotelDataForUserReservationsList(roomId) {
   }
 }
 
-let testReservations = [
-    {
-        "id": 14,
-        "room_id": 59,
-        "arrival_date": "2024-04-20T04:00:00.000Z",
-        "client_id": 24,
-        "created_at": "2024-03-30T12:28:59.297Z",
-        "departure_date": "2024-05-15T04:00:00.000Z",
-        "price": 3000,
-        "hotel": {
-          "hotel_name": "La place des hommes fidèles",
-          "address": "102 route des fidèles, Ouagadougou, Burkina Faso, B2O 7V7",
-          "category": "Relaxation",
-          "room": {
-            "id": 59,
-            "room_type": "luxe",
-            "price": 500,
-            "commodity": null,
-            "capacity": 2,
-            "view": null,
-            "extensions": null,
-            "repairs": null,
-            "hotel_id": 10,
-            "hotel_chain_id": 3,
-            "room_number": 901,
-            "room_floor": 9,
-            "number_of_rooms_for": 40,
-            "room_name": "standard"
-          }
-        }
-      },
-      {
-        "id": 14,
-        "room_id": 59,
-        "arrival_date": "2024-06-10T04:00:00.000Z",
-        "client_id": 24,
-        "created_at": "2024-06-20T12:28:59.297Z",
-        "departure_date": "2024-04-05T04:00:00.000Z",
-        "price": 3000,
-        "hotel": {
-          "hotel_name": "La place des hommes fidèles",
-          "address": "102 route des fidèles, Ouagadougou, Burkina Faso, B2O 7V7",
-          "category": "Relaxation",
-          "room": {
-            "id": 59,
-            "room_type": "luxe",
-            "price": 500,
-            "commodity": null,
-            "capacity": 2,
-            "view": null,
-            "extensions": null,
-            "repairs": null,
-            "hotel_id": 10,
-            "hotel_chain_id": 3,
-            "room_number": 901,
-            "room_floor": 9,
-            "number_of_rooms_for": 40,
-            "room_name": "standard"
-          }
-        }
-      },
-      {
-        "id": 14,
-        "room_id": 59,
-        "arrival_date": "2024-03-30T04:00:00.000Z",
-        "client_id": 24,
-        "created_at": "2024-03-30T12:28:59.297Z",
-        "departure_date": "2024-04-05T04:00:00.000Z",
-        "price": 3000,
-        "hotel": {
-          "hotel_name": "La place des hommes fidèles",
-          "address": "102 route des fidèles, Ouagadougou, Burkina Faso, B2O 7V7",
-          "category": "Relaxation",
-          "room": {
-            "id": 59,
-            "room_type": "luxe",
-            "price": 500,
-            "commodity": null,
-            "capacity": 2,
-            "view": null,
-            "extensions": null,
-            "repairs": null,
-            "hotel_id": 10,
-            "hotel_chain_id": 3,
-            "room_number": 901,
-            "room_floor": 9,
-            "number_of_rooms_for": 40,
-            "room_name": "standard"
-          }
-        }
-      }
-  ];
-
 function getClosestReservation(reservations) {
     const currentDate = new Date();
     let closestReservation = null;
@@ -1024,6 +1064,26 @@ async function verifyLoginEmail(email) {
     console.error("Error while querying clients for login", error.stack);
     throw error;
     return [];
+  }
+}
+
+async function verifyLoginEmployeeEmail(email) {
+  const query = "select * from employees where email = $1";
+  const paramValues = [email.toLowerCase()];
+
+  try {
+    let result = await db.query(query, paramValues);
+    if (result.rows.length > 0) {
+      console.log("employee exists");
+      return result.rows[0];
+    } else {
+      console.log("Email is invalid");
+      return {};
+    }
+  } catch (error) {
+    console.error("Error while querying clients for login", error.stack);
+    throw error;
+    return {};
   }
 }
 
@@ -1101,9 +1161,6 @@ function extractCityCountry(hotelAddress) {
 function extractStreetNameCityCountry(address) {
     const parts = address.split(",");
 
-    console.log(`Input: ${address}`);
-    console.log(`Parts: ${JSON.stringify(parts, null, 2)}`);
-  
     const streetName = parts[0].trim(); 
     const city = parts[1].trim(); 
     const country = parts[2].trim();
@@ -1132,6 +1189,11 @@ function countNumberOfDays(arrivalDate, departureDate) {
   const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
 
   return parseInt(differenceInDays);
+}
+
+function getYearFromDate(dateString) {
+  const date = new Date(dateString);
+  return date.getFullYear().toString();
 }
 
 function countNumberOfDaysWithDashes(arrivalDate, departureDate) {
@@ -1219,6 +1281,22 @@ function formatRangeToShortString(arrivalDate, departureDate) {
 
   return `${formattedArrival} - ${formattedDeparture}`;
 }
+
+function formatNumberString(numberString) {
+  // Ensure the string is in the expected format
+  if (numberString.length !== 9) {
+    throw new Error('Number string must be 9 characters long.');
+  }
+
+  // Slice the string to get the first 3 digits
+  const firstPart = numberString.slice(0, 3);
+  // Mask the remaining parts
+  const maskedPart = '***-***';
+
+  // Concatenate the parts to get the desired format
+  return `${firstPart}-${maskedPart}`;
+}
+
 function formatDateToFullDay(dateString) {
   const monthNames = [
     "Janvier",
