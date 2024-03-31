@@ -274,7 +274,7 @@ app.post('/update-user', async (req, res) => {
     };
 
     let didUpdateWork = updateUserInfo(userData);
-    
+
     if(didUpdateWork) {
       currentLoggedClientData['first_name'] = firstName;
       currentLoggedClientData['last_name'] = lastName;
@@ -300,7 +300,7 @@ async function updateUserInfo(userData) {
   const query = `UPDATE clients 
     SET first_name = $1, last_name = $2, email = $3, phone_number = $4, address = $5
     WHERE id = $6`;
-    let fullAddress = `${userData.streetName}, ${userData.city}, ${userData.country}, ${userData.zipCode}`;
+    let fullAddress = `${userData.street_name}, ${userData.city}, ${userData.country}, ${userData.zipCode}`;
     const paramValues = [userData.first_name, userData.last_name, userData.email, userData.phone_number, fullAddress, userData.id];
 
     try {
@@ -493,7 +493,10 @@ app.get("/reserv-details", async (req, res) => {
   res.render("reservation-details.ejs");
 });
 app.get("/reservations", async (req, res) => {
-  res.render("user-reservations.ejs");
+
+  console.log(`data: ${JSON.stringify(currentLoggedClientData, null, 2)}`);
+
+  res.render("user-reservations.ejs", {data:currentLoggedClientData, getStayShort:getStayShort, categoryToIcon:categoryToIcon});
 });
 app.get("/hotels", async (req, res) => {
   let hotelsList = await getListHotels();
@@ -913,7 +916,12 @@ function getClosestReservation(reservations) {
 function formatDateToShort(date) {
     const options = { day: 'numeric', month: 'short' };
     return new Date(date).toLocaleDateString('fr-FR', options);
-  }
+}
+
+function getStayShort(arrivalDate, departureDate) {
+  const stay = `${formatDateToShort(arrivalDate)} - ${formatDateToShort(departureDate)}`;
+  return stay;
+}
 
 function getClosetReservationString(userReservations) {
     let closestReservation = getClosestReservation(userReservations);

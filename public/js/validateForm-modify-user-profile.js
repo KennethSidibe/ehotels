@@ -72,7 +72,6 @@ $(document).ready(function() {
         let formFirstName = $('#'+ FIRST_NAME_INPUT_ID).val();
         let formLastName = $('#'+ LAST_NAME_INPUT_ID).val();
         let formEmail = $('#'+ EMAIL_INPUT_ID).val();
-        let formPwd = $('#'+ PWD_INPUT_ID).val();
         let formPhone = $('#'+ PHONE_NUMBER_INPUT_ID).val();
         let formStreetName = $('#'+ STREET_NAME_INPUT_ID).val();
         let formCity = $('#'+ CITY_INPUT_ID).val();
@@ -91,7 +90,6 @@ $(document).ready(function() {
     
         // if valid, submit the form.
         if (firstNameValid && lastNameValid && emailValid && phoneValid && streetNameValid && countryValid && cityValid && zipValid) {
-            alert('form submitting');
             this.submit();
         } else {
             event.preventDefault();
