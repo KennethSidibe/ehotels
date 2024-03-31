@@ -163,22 +163,30 @@ app.post("/user", async (req, res) => {
   if (client.length <= 0 || !isPwdValid) {
     console.log("Failed to log in, pwd dont match");
     res.redirect("/login?unsuccessful");
+    return;
   }
 
   console.log("Client logged succesfully");
-  console.log(`Client id: ${JSON.stringify(client, null, 2)}`);
+  client.pwd = "";
   let userReservations = await getUserReservations(client.id);
+  
   if(userReservations.length > 0) {
     console.log(`user reservations: ${JSON.stringify(userReservations, null, 2)}`);
     let closestReservationString = getClosetReservationString(userReservations);
     currentLoggedClientData = client;
     currentLoggedClientData['nextReservation'] = closestReservationString;
     
+    console.log(`Client data: ${JSON.stringify(currentLoggedClientData, null, 2)}`);
+
+
     res.render("user-profile.ejs", { data: currentLoggedClientData, capitalizeFirstLetter:capitalizeFirstLetter });
   }
+
   currentLoggedClientData = client;
+  currentLoggedClientData['reservations'] = userReservations;
   currentLoggedClientData['nextReservation'] = 'undefined';
   
+  console.log(`Client data: ${JSON.stringify(currentLoggedClientData, null, 2)}`);
   
   res.render("user-profile.ejs", { data: currentLoggedClientData, capitalizeFirstLetter:capitalizeFirstLetter });
   
@@ -242,6 +250,138 @@ app.get("/modify-employee", async (req, res) => {
 app.get("/employee", async (req, res) => {
   res.render("employee-profile.ejs");
 });
+app.post('/update-user', async (req, res) => {
+  let clientId = currentLoggedClientData['id'];
+    let firstName = req.body.firstName;
+    let lastName = req.body.lastName;
+    let email = req.body.email;
+    let phoneNumber = req.body.phoneNumber;
+    let streetName = req.body.streetName;
+    let city = req.body.city;
+    let country = req.body.country;
+    let zipCode = req.body.zipCode;
+
+    let userData = {
+      id:clientId,
+      first_name: firstName,
+      last_name:lastName,
+      email: email,
+      phone_number:phoneNumber,
+      street_name:streetName,
+      city: city,
+      country:country,
+      zipCode:zipCode
+    };
+
+    let didUpdateWork = updateUserInfo(userData);
+    
+    if(didUpdateWork) {
+      currentLoggedClientData['first_name'] = firstName;
+      currentLoggedClientData['last_name'] = lastName;
+      currentLoggedClientData['address'] = `${streetName}, ${city}, ${country}, ${zipCode}`;
+      currentLoggedClientData['email'] = email;
+      currentLoggedClientData['phone_number'] = phoneNumber;
+  
+      res.redirect('/successful-modify-user-profile');
+      return;
+    } else {
+      res.redirect('/login');
+      return;
+    }
+    
+
+});
+
+app.get('/successful-modify-user-profile', (req, res) => {
+  res.render('user-profile.ejs', {data:currentLoggedClientData, capitalizeFirstLetter:capitalizeFirstLetter});
+});
+
+async function updateUserInfo(userData) {
+  const query = `UPDATE clients 
+    SET first_name = $1, last_name = $2, email = $3, phone_number = $4, address = $5
+    WHERE id = $6`;
+    let fullAddress = `${userData.streetName}, ${userData.city}, ${userData.country}, ${userData.zipCode}`;
+    const paramValues = [userData.first_name, userData.last_name, userData.email, userData.phone_number, fullAddress, userData.id];
+
+    try {
+      const result = await db.query(query, paramValues);
+      if(result.rowCount <= 0 ) {
+        // No rows Updated
+        return false;
+      }
+      
+      // row was updated 
+      return true;
+    } catch (error) {
+      console.error(`Error while updating user profile : ${error.stack}`);
+      return false;
+    }
+}
+
+app.get("/edit-info", async (req, res) => {
+
+    console.log(`client data: ${JSON.stringify(currentLoggedClientData, null, 2)}`);
+    // let addressObject = extractStreetNameCityCountry(currentLoggedClientData.address);
+    // let streetName = addressObject.streetName;
+    // let city = addressObject.city;
+    // let country = addressObject.country;
+    // let zipCode = addressObject.zipCode;
+    let testClientData = {
+      "id": 24,
+      "first_name": "moussa",
+      "last_name": "sidibe",
+      "address": "502 tuerie des points, Ouaga, FR, Q8O P8A",
+      "created_at": "2024-03-30T12:28:59.294Z",
+      "email": "amadou@ken.com",
+      "phone_number": "(543) 923-9029",
+      "pwd": "",
+      "nextReservation": "undefined",
+      "reservations": [
+        {
+          "id": 14,
+          "room_id": 59,
+          "arrival_date": "2024-03-30T04:00:00.000Z",
+          "client_id": 24,
+          "created_at": "2024-03-30T12:28:59.297Z",
+          "departure_date": "2024-04-05T04:00:00.000Z",
+          "price": 3000,
+          "hotel": {
+            "hotel_name": "La place des hommes fidèles",
+            "address": "102 route des fidèles, Ouagadougou, Burkina Faso, B2O 7V7",
+            "category": "Relaxation",
+            "room": {
+              "id": 59,
+              "room_type": "luxe",
+              "price": 500,
+              "commodity": null,
+              "capacity": 2,
+              "view": null,
+              "extensions": null,
+              "repairs": null,
+              "hotel_id": 10,
+              "hotel_chain_id": 3,
+              "room_number": 901,
+              "room_floor": 9,
+              "number_of_rooms_for": 40,
+              "room_name": "standard"
+            }
+          }
+        }
+      ]
+    };
+    testClientData['street_name'] = '101 La rue des typeshit';
+    testClientData['city'] = ' ouaga';
+    testClientData['country'] = 'FR';
+    testClientData['zipCode'] = 'F5U Z7Z';
+    // currentLoggedClientData['street_name'] = streetName;
+    // currentLoggedClientData['city'] = city;
+    // currentLoggedClientData['country'] = country;
+    // currentLoggedClientData['zipCode'] = zipCode;
+    testClientData['first_name'] = '';
+    testClientData['last_name'] = '';
+    testClientData['email'] = '';
+  res.render("modify-profile.ejs", {data:testClientData, capitalizeFirstLetter:capitalizeFirstLetter});
+});
 
 app.get("/clerk-book", async (req, res) => {
   let clerkHotelData = await getHotelData(10);
@@ -267,8 +407,6 @@ app.post("/clerk-create-reserv", async (req, res) => {
 
   res.redirect("/?successful");
 });
-
-console.log(`Hash of 1234567890 : ${await hashPassword('1234567890')}`);
 
 app.post("/clerk-confirm", async (req, res) => {
   let userFirstName = req.body.firstName;
@@ -889,6 +1027,21 @@ function extractCityCountry(hotelAddress) {
   // Return the city and country concatenated together
   return `${city}, ${country}`;
 }
+function extractStreetNameCityCountry(address) {
+    const parts = address.split(",");
+
+    console.log(`Input: ${address}`);
+    console.log(`Parts: ${JSON.stringify(parts, null, 2)}`);
+  
+    const streetName = parts[0].trim(); 
+    const city = parts[1].trim(); 
+    const country = parts[2].trim();
+    const zipCode = parts[3].trim();
+  
+    // Return the street name, city, and country concatenated together
+    let addressObject = {streetName:streetName, city:city, country:country, zipCode:zipCode};
+    return addressObject;
+  }
 
 function countNumberOfDays(arrivalDate, departureDate) {
   // Parse the input strings to create Date objects
