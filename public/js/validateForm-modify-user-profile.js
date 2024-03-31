@@ -1,5 +1,6 @@
 
 $(document).ready(function() {
+
     function validateEmail(email, requiredMsg, invalidMsg, emailErrorId, emailInputId) {
         // check if the value is not empty
         if (!hasValue(email, requiredMsg, emailErrorId, emailInputId)) {
@@ -72,7 +73,11 @@ $(document).ready(function() {
         let formFirstName = $('#'+ FIRST_NAME_INPUT_ID).val();
         let formLastName = $('#'+ LAST_NAME_INPUT_ID).val();
         let formEmail = $('#'+ EMAIL_INPUT_ID).val();
-        let formPhone = $('#'+ PHONE_NUMBER_INPUT_ID).val();
+        // to get phone number
+        const phoneInput = document.querySelector('#' + PHONE_NUMBER_INPUT_ID);
+        const iti = intlTelInput(phoneInput);
+        let formPhone = iti.getNumber();
+        // to get phone number
         let formStreetName = $('#'+ STREET_NAME_INPUT_ID).val();
         let formCity = $('#'+ CITY_INPUT_ID).val();
         let formCountry = $('#'+ COUNTRY_INPUT_ID).val();

@@ -180,7 +180,11 @@ $(document).ready(function() {
         let formLastName = $('#'+ LAST_NAME_INPUT_ID).val();
         let formEmail = $('#'+ EMAIL_INPUT_ID).val();
         let formPwd = $('#'+ PWD_INPUT_ID).val();
-        let formPhone = $('#'+ PHONE_NUMBER_INPUT_ID).val();
+        // to get phone number
+        const phoneInput = document.querySelector('#' + PHONE_NUMBER_INPUT_ID);
+        const iti = intlTelInput(phoneInput);
+        let formPhone = iti.getNumber();
+        // to get phone number
         let formStreetName = $('#'+ STREET_NAME_INPUT_ID).val();
         let formCity = $('#'+ CITY_INPUT_ID).val();
         let formCountry = $('#'+ COUNTRY_INPUT_ID).val();
