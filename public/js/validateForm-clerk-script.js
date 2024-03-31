@@ -229,8 +229,8 @@ $(document).ready(function() {
     const ZIP_INVALID = "S'il te plaît, entre ton code postale";
     
     const ARRIVAL_DATE_ERROR_ID = 'arrivalDateError';
-    const ROOM_PRICE_ERROR_ID = 'roomError';
     const DEPARTURE_DATE_ERROR_ID = 'departureDateError';
+    const ROOM_PRICE_ERROR_ID = 'roomError';
     const FIRST_NAME_ERROR_ID = 'firstNameError';
     const LAST_NAME_ERROR_ID = 'lastNameError';
     const EMAIL_ERROR_ID = 'emailError';
@@ -241,8 +241,8 @@ $(document).ready(function() {
     const COUNTRY_ERROR_ID = 'countryError';
     const ZIP_CODE_ERROR_ID = 'zipCodeError';
     
-    const ARRIVAL_DATE_INPUT_ID = 'arrivalDateInput';
     const ROOM_PRICE_INPUT_ID = 'roomPriceInput'
+    const ARRIVAL_DATE_INPUT_ID = 'arrivalDateInput';
     const DEPARTURE_DATE_INPUT_ID = 'departureDateInput';
     const FIRST_NAME_INPUT_ID = 'firstNameInput';
     const LAST_NAME_INPUT_ID = 'lastNameInput';

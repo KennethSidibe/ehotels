@@ -292,9 +292,62 @@ app.post('/update-user', async (req, res) => {
 
 });
 
+app.post('/update-user-reserv', async(req, res) => {
+  
+  let arrivalDate = req.body.arrivalDate;
+  let departureDate = req.body.departureDate;
+  let reservRoomId = currentReservationSelectedData['id'];
+  let reservInfoToUpdate = {
+    id:reservRoomId,
+    arrival_date:arrivalDate,
+    departure_date:departureDate,
+  };
+  let didUpdateWork = await updateReservationDates(reservInfoToUpdate);
+  
+  if(didUpdateWork) {
+    // if successfull
+    let arrivalDateDb = `${arrivalDate}T04:00:00.000Z`;
+    let departureDateDb = `${departureDate}T04:00:00.000Z`;
+    currentLoggedClientData.reservations[currentReservSelectedIndex]['arrival_date'] = arrivalDateDb;
+    currentLoggedClientData.reservations[currentReservSelectedIndex]['departure_date'] = departureDateDb;
+    
+    res.redirect('/successful-modify-user-reservation');
+    return;
+  } 
+
+  res.redirect('/login');
+  return;
+  
+});
+
+app.get('/successful-modify-user-reservation', (req, res) => {
+  res.redirect('/reservations?successful');
+});
 app.get('/successful-modify-user-profile', (req, res) => {
   res.render('user-profile.ejs', {data:currentLoggedClientData, capitalizeFirstLetter:capitalizeFirstLetter});
 });
+
+async function updateReservationDates(reservInfo) {
+  const query = `UPDATE reservations 
+              SET arrival_date = $1, departure_date = $2 
+              WHERE id = $3`;
+  const paramValues = [reservInfo.arrival_date, reservInfo.departure_date, reservInfo.id];
+  console.log(`ArrivalDate : ${reservInfo.arrival_date}, DepartureDate: ${reservInfo.departure_date}`);
+  try {
+
+    const result = await db.query(query, paramValues);
+    if(result.rowCount > 0 ) {
+      console.log(`Reservation successfully modified`);
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    console.error(`Error while updating reservations data: ${error.stack}`);
+    throw error;
+    return false;
+  }
+}
 
 async function updateUserInfo(userData) {
   const query = `UPDATE clients 
@@ -490,7 +543,26 @@ app.post("/clerk-confirm", async (req, res) => {
   });
 });
 app.get("/reserv-details", async (req, res) => {
-  res.render("reservation-details.ejs");
+  
+  let reservSelectedId = parseInt(req.query.id);
+  let reservSelected = currentLoggedClientData['reservations'][reservSelectedId];
+  let numberOfNights = calculateNightsBetweenDates(reservSelected.arrival_date, reservSelected.departure_date);
+  let nightString = getNightString(numberOfNights);
+  reservSelected['numberOfNights'] = numberOfNights;
+  reservSelected['nightString'] = nightString;
+  let personString = getPersonString(parseInt(reservSelected.hotel.room.capacity));
+  reservSelected['personString'] = personString;
+
+  currentReservationSelectedData = reservSelected;
+  currentReservSelectedIndex = reservSelectedId;
+
+  res.render("reservation-details.ejs", {
+    data:reservSelected, 
+    capitalizeFirstLetter:capitalizeFirstLetter,
+    formatDateToReadable:formatDateToReadable,
+    formatDateToYYYYMMDD:formatDateToYYYYMMDD
+  });
+
 });
 app.get("/reservations", async (req, res) => {
 
@@ -572,6 +644,9 @@ let clerkCurrentHotelData = {};
 // User Logged Data
 let currentLoggedClientData = {};
 let currentClientReservationsData = {};
+  // reservations List Data 
+  let currentReservationSelectedData = {};
+  let currentReservSelectedIndex = 0;
 // User Logged Data
 
 // --------------- ** DATA ** -----------------
@@ -1089,6 +1164,38 @@ function countNumberOfDaysWithDashes(arrivalDate, departureDate) {
   const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
 
   return parseInt(differenceInDays);
+}
+
+function formatDateToReadable(dateString) {
+  // convert "2024-03-30T04:00:00.000Z" to Samedi 30 Mars
+  const options = { weekday: 'long', day: 'numeric', month: 'long' };
+  const date = new Date(dateString);
+  // Use 'fr-FR' locale to get French names for the day and month
+  return date.toLocaleDateString('fr-FR', options);
+}
+
+function formatDateToYYYYMMDD(dateString) {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  // Get month and add 1 because getMonth() returns 0-11. Pad with '0' if less than 10.
+  const month = ('0' + (date.getMonth() + 1)).slice(-2);
+  // Get day and pad with '0' if less than 10.
+  const day = ('0' + date.getDate()).slice(-2);
+
+  return `${year}-${month}-${day}`;
+}
+
+function calculateNightsBetweenDates(arrivalDateString, departureDateString) {
+  const arrivalDate = new Date(arrivalDateString);
+  const departureDate = new Date(departureDateString);
+
+  // Calculate the difference in milliseconds
+  const differenceInMilliseconds = departureDate - arrivalDate;
+
+  // Convert milliseconds to days
+  const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+
+  return differenceInDays;
 }
 
 function formatRangeToShortString(arrivalDate, departureDate) {

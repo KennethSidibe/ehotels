@@ -59,7 +59,7 @@
 
     <!-- Reservation Info -->
 
-    <form action="submit">
+    <form action="/update-user-reserv" id="updateUserReservForm" method="post" >
         <div class="container w-75 my-4 p-4 reservation-info-container rounded-4" id="reservationInfo" >
             <style>
                 .info-name {
@@ -75,27 +75,27 @@
                 </div>
                 <div class="ms-1 row gy-0 d-flex flex-column">
                     <div class="d-flex " >
-                        <h4 style="margin-bottom: 0px;">Room Name</h4>
+                        <h4 style="margin-bottom: 0px;"><%= capitalizeFirstLetter(data.hotel.room.room_name) %></h4>
                     </div>
-                    <h6 >Hotel name</h6>
-                    <p class="fw-light">Hotel localisation</p>
+                    <h6 ><%= capitalizeFirstLetter(data.hotel.hotel_name) %></h6>
+                    <p class="fw-light"><%= data.hotel.address %></p>
                 </div>
             </div>
             
             <div class="row my-5">
                 <div class="col d-flex flex-column">
                     <p class="my-2 info-name">Arrivée</p>
-                    <p class="fs-5 reservation-date-info" >Lundi 02 Avril</p>
-                    <input type="date" name="arrivalDate" id="arrival-date" class="form-control hide" >
+                    <p class="fs-5 reservation-date-info" ><%= capitalizeFirstLetter(formatDateToReadable(data.arrival_date)) %></p>
+                    <input type="date" name="arrivalDate" id="arrivalDateInput" class="form-control hide" value="<%= formatDateToYYYYMMDD(data.arrival_date) %>" >
                 </div>
                 <div class="col d-flex flex-column align-items-center">
                     <i class="bi bi-moon-stars fs-2 my-2"></i>
-                    <p class="fw-medium">10 Nuits</p>
+                    <p class="fw-medium"><%= data.numberOfNights %> <%= capitalizeFirstLetter(data.nightString) %></p>
                 </div>
                 <div class="col d-flex flex-column align-items-end">
                     <p class="info-name">Départ</p>
-                    <p class="fs-5 reservation-date-info" >Mardi 10 Avril</p>
-                    <input type="date" name="arrivalDate" id="departure-date" class="form-control hide" >
+                    <p class="fs-5 reservation-date-info" ><%= capitalizeFirstLetter(formatDateToReadable(data.departure_date)) %></p>
+                    <input type="date" name="departureDate" id="departureDateInput" class="form-control hide" value="<%= formatDateToYYYYMMDD(data.departure_date) %>" >
                 </div>
             </div>
         
@@ -105,11 +105,11 @@
             <div class="row my-5">
                 <div class="col d-flex flex-column">
                     <p class="my-2 info-name" >Chambres & Personnes</p>
-                    <p class="fs-5" >2 Personnes (1 chambre)</p>
+                    <p class="fs-5" ><%= data.hotel.room.capacity %> <%= capitalizeFirstLetter(data.personString) %> (1 chambre)</p>
                 </div>
                 <div class="col d-flex flex-column align-items-end">
                     <p class="info-name" >Prix/Nuit</p>
-                    <p>150$</p>
+                    <p><%= data.hotel.room.price %>$</p>
                 </div>
             </div>
             <div class="d-flex justify-content-center">
@@ -148,11 +148,11 @@
         
             <div class="row mt-5">
                 <div class="col d-flex flex-column">
-                    <p class="my-2 info-name fw-bold" >Total price:</p>
+                    <p class="my-2 info-name fw-bold">Total price:</p>
                 </div>
                 <div class="col d-flex flex-column align-items-end">
-                    <h2 class="my-0" >1200$</h2>
-                    <p class="fw-light" >10 nuits</p>
+                    <h2 class="my-0" ><%= data.price %>$</h2>
+                    <p class="fw-light" ><%= data.numberOfNights %> <%= data.nightString %></p>
                 </div>
             </div>
             <div class="d-flex gap-5 flex-row justify-content-center align-items-center">
@@ -190,6 +190,7 @@
 
     <!-- Page Script -->
     <script src="js/reservation-details-script.js"></script>
+    <script src="js/validate-modify-user-reservation.js" ></script>
     <!-- Page Script -->
 </body>
 
