@@ -255,6 +255,54 @@ app.get('/hotel-adm', (req,res) => {
         categoryToIcon:categoryToIcon
       });
 });
+app.get('/hotel-employees', (req,res) => {
+  res.render('hotel-employees.ejs', 
+      {
+        data:currentLoggedHotelAdminData, 
+        capitalizeFirstLetter:capitalizeFirstLetter,
+        categoryToIcon:categoryToIcon,
+        getYearFromDate:getYearFromDate
+      });
+});
+app.get('/hotel-view-employee', (req, res) => {
+  
+  let employeeSelectedIndex = parseInt(req.query.id);
+  currentSelectedEmployeeIndex = employeeSelectedIndex;
+  console.log(`employee index: ${employeeSelectedIndex}`);
+  currentSelectedEmployeeData = currentLoggedHotelAdminData.employees[employeeSelectedIndex];
+  currentSelectedEmployeeData['hotel_name'] = currentLoggedHotelAdminData.hotel.hotel_name;
+  let addressObject = extractStreetNameCityCountry(currentSelectedEmployeeData.address);
+  let streetName = addressObject.streetName;
+  let city = addressObject.city;
+  let country = addressObject.country;
+  let zipCode = addressObject.zipCode;
+  currentSelectedEmployeeData['street_name'] = streetName;
+  currentSelectedEmployeeData['city'] = city;
+  currentSelectedEmployeeData['country'] = country;
+  currentSelectedEmployeeData['zipCode'] = zipCode;
+  console.log(`selected Employee ${JSON.stringify(currentSelectedEmployeeData, null, 2)}`);
+  res.render('hotel-view-employee.ejs', 
+      {
+        data:currentSelectedEmployeeData,
+        capitalizeFirstLetter:capitalizeFirstLetter,
+        categoryToIcon:categoryToIcon,
+        formatNumberString:formatNumberString,
+        getYearFromDate:getYearFromDate
+      });
+});
+
+app.get('/hotel-edit-employee', (req,res) => {
+  res.render(
+    'modify-employee-profile.ejs',
+    {
+      employeeIndex:currentSelectedEmployeeIndex,
+      data:currentSelectedEmployeeData,
+      isHotelEditing:true,
+      capitalizeFirstLetter:capitalizeFirstLetter
+    }
+
+  )
+});
 
 app.get("/hotel-reservations", async (req, res) => {
   res.render("hotel-reservations.ejs", {
@@ -311,7 +359,7 @@ app.get('/hotel-drop-reserv', async(req, res) => {
     res.redirect('/hotel-reservations?successful');
     return;
   }
-  
+
   console.log(`Drop reservation failed`);
   res.redirect('/login');
   return;
@@ -529,6 +577,7 @@ app.post('/update-employee', async(req, res) => {
   let didUpdateWork = await updateEmployeeInfo(employeeData);
 
   if(didUpdateWork) {
+    
     currentLoggedEmployeeData['first_name'] = firstName;
     currentLoggedEmployeeData['last_name'] = lastName;
     currentLoggedEmployeeData['address'] = `${streetName}, ${city}, ${country}, ${zipCode}`;
@@ -536,6 +585,53 @@ app.post('/update-employee', async(req, res) => {
     currentLoggedEmployeeData['phone_number'] = phoneNumber;
 
     res.redirect('/successful-modify-employee-profile');
+    return;
+  } else {
+    res.redirect('/login');
+    return;
+  }
+});
+app.post('/hotel-update-employee', async(req, res) => {
+  
+  let employeeId = currentSelectedEmployeeData['id'];
+  let firstName = req.body.firstName;
+  let lastName = req.body.lastName;
+  let email = req.body.email;
+  let phoneNumber = req.body.phoneNumber;
+  let streetName = req.body.streetName;
+  let city = req.body.city;
+  let country = req.body.country;
+  let zipCode = req.body.zipCode;
+
+  let employeeData = {
+    id:employeeId,
+    first_name: firstName,
+    last_name:lastName,
+    email: email,
+    phone_number:phoneNumber,
+    street_name:streetName,
+    city: city,
+    country:country,
+    zipCode:zipCode
+  };
+
+  let didUpdateWork = await updateEmployeeInfo(employeeData);
+
+  if(didUpdateWork) {
+
+    currentSelectedEmployeeData['first_name'] = firstName;
+    currentSelectedEmployeeData['last_name'] = lastName;
+    currentSelectedEmployeeData['address'] = `${streetName}, ${city}, ${country}, ${zipCode}`;
+    currentSelectedEmployeeData['email'] = email;
+    currentSelectedEmployeeData['phone_number'] = phoneNumber;
+
+    currentLoggedHotelAdminData.employees[currentSelectedEmployeeIndex]['first_name'] = firstName;
+    currentLoggedHotelAdminData.employees[currentSelectedEmployeeIndex]['last_name'] = lastName;
+    currentLoggedHotelAdminData.employees[currentSelectedEmployeeIndex]['address'] = `${streetName}, ${city}, ${country}, ${zipCode}`;
+    currentLoggedHotelAdminData.employees[currentSelectedEmployeeIndex]['email'] = email;
+    currentLoggedHotelAdminData.employees[currentSelectedEmployeeIndex]['phone_number'] = phoneNumber;
+
+    res.redirect('/hotel-employees');
     return;
   } else {
     res.redirect('/login');
@@ -941,9 +1037,9 @@ let currentLoggedEmployeeData = {};
 // Hotel Admin Login Data
 let currentLoggedHotelAdminData = {};
 let currentSelectedRoomReservation = {};
+let currentSelectedEmployeeData = {};
+let currentSelectedEmployeeIndex = -1;
 
-let hash = await hashPassword('1234567890');
-console.log(`Hash: ${hash}`);
 
 
 // --------------- ** DATA ** -----------------
@@ -1022,7 +1118,7 @@ async function getHotelEmployees(hotelId) {
   try {
     const query = `select 
               id, first_name, last_name, job_role, phone_number, email, created_at, 
-              hotel_id, address, is_admin
+              hotel_id, address, nas, is_admin
         from employees
         where hotel_id = $1`;
 
