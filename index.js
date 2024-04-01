@@ -317,6 +317,25 @@ app.get('/hotel-edit-employee', (req,res) => {
   )
 });
 
+app.get('/hotel-edit-room', (req,res) => {
+  let roomIndex = parseInt(req.query.id);
+  currentSelectedRoomIndex = roomIndex;
+  currentSelectedRoomData = currentRoomsHotelPageData[roomIndex];
+
+  console.log(`Room index : ${roomIndex}`);
+  console.log(`selected Room: ${JSON.stringify(currentSelectedRoomData, null, 2)}`);
+  
+  res.render(
+    'hotel-modify-room.ejs',
+    {
+      selectedRoom:currentSelectedRoomData,
+      data:currentLoggedHotelAdminData,
+      capitalizeFirstLetter:capitalizeFirstLetter
+    }
+
+  )
+});
+
 app.get("/hotel-reservations", async (req, res) => {
   res.render("hotel-reservations.ejs", {
     data: currentLoggedHotelAdminData,
@@ -1052,6 +1071,8 @@ let currentLoggedHotelAdminData = {};
 let currentSelectedRoomReservation = {};
 let currentSelectedEmployeeData = {};
 let currentSelectedEmployeeIndex = -1;
+let currentSelectedRoomIndex = -1;
+let currentSelectedRoomData = {};
 
 
 
