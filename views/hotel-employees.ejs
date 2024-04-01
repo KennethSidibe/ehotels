@@ -48,35 +48,46 @@
 
 <body>
 
+  <div class="container w-50 mt-3">
+    <div class="row">
+      <div class="d-flex flex-row gap-2 mb-2">
+        <p><i class="bi bi-arrow-left"></i></p>
+        <h5 class="text-primary "><a href="/hotel-adm">Retour au profil</a></h5>
+        </div>
+    </div>
+  </div>
+
     <main>
         <ol class="gradient-list">
           
+          <% data.employees.forEach((employee, index) => { %>
+           
           <li>
 
             <div class="row mb-2">
 
               <div class="col d-flex flex-column">
                 <div class="col mt-3">
-                    <div class="col"> <a class="hotel-name">Kenneth Sidibe</a></div>
+                    <div class="col"> <a class="hotel-name"><%= capitalizeFirstLetter(employee.first_name) %> <%= capitalizeFirstLetter(employee.last_name) %></a></div>
                 </div>
 
                 
                 <div class="row gy-1 d-flex flex-row col my-3">
                   <!-- links to google map city location  -->
                     <div class="col-6 location-type"><a class="link-secondary link-underline-opacity-25 link-opacity-50-hover" >
-                      Job role</a>
+                      <%= capitalizeFirstLetter(employee.job_role) %></a>
                     </div>
                     <div class="col-6 location-type"><a class="link-secondary link-underline-opacity-25 link-opacity-50-hover">
-                      +226 70 70 12 21</a>
+                      <%= capitalizeFirstLetter(employee.phone_number) %></a>
                     </div>
                     <div class="col location-type"><a class="link-secondary link-underline-opacity-25 link-opacity-50-hover">
-                      kennethsidibe@gmail.com</a>
+                      <%= employee.email %></a>
                     </div>
                 </div>
               </div>
 
               <div class="col-3 d-flex justify-content-center align-items-center">
-                <h1>❤️</h1>
+                <h1><%= categoryToIcon(data.hotel.category) %> </h1>
               </div>
 
             </div>
@@ -90,9 +101,9 @@
                 <div class="col-6 d-flex flex-column-reverse">
                   <div class="row d-flex flex-column">
 
-                    <div class="col d-flex justify-content-end location-type my-1" >since 2011</div>
+                    <div class="col d-flex justify-content-end location-type my-1" >since <%= getYearFromDate(employee.created_at) %></div>
                     <div class="col d-flex justify-content-end mt-2">
-                      <button class="btn btn-primary">< Voir Employé</button>
+                      <a href="/hotel-view-employee?id=<%= index %>"><button class="btn btn-primary">< Voir Employé</button></a>
                     </div>
 
                   </div>
@@ -100,6 +111,9 @@
             </div>
             
         </li>
+
+        <% }) %>
+
 
         </ol>
       </main>    
