@@ -203,6 +203,170 @@ app.get('/employee', (req, res) => {
   });
 }); 
 
+app.post("/hotel-adm", async (req, res) => {
+  
+  let email = req.body.email;
+  let pwd = req.body.pwd;
+  let hotelAdmin = await verifyHotelAdminEmail(email);
+  let hotelId = hotelAdmin.hotel_id;
+  console.log(`hotel admin data: ${JSON.stringify(hotelAdmin, null, 2)}`);
+  if(hotelAdmin.hasOwnProperty('id')) {
+
+    let isPwdValid = await verifyPassword(pwd, hotelAdmin.pwd);
+    
+    if(isPwdValid) {
+      let hotelData = await getHotelData(hotelId);
+      console.log(`Hotel data: ${JSON.stringify(hotelData, null, 2)}`);
+      let hotelChainId = parseInt(hotelData.hotel_chain_id)
+      let hotelEmployees = await getHotelEmployees(hotelId);
+      let roomReservations = await getHotelReservations(hotelData);
+      let hotelChain = await getHotelChain(hotelChainId);
+      currentLoggedHotelAdminData['pwd'] = '';
+      currentLoggedHotelAdminData = hotelAdmin;
+      currentLoggedHotelAdminData['hotel_chain'] = hotelChain;
+      currentLoggedHotelAdminData['hotel'] = hotelData;
+      currentLoggedHotelAdminData['employees'] = hotelEmployees;
+      currentLoggedHotelAdminData['roomReservations'] = roomReservations;
+      
+      console.log(`hotel Admin successfully logged in! data: ${JSON.stringify(currentLoggedHotelAdminData, null, 2)}`);
+      res.render('hotel-admin.ejs', 
+      {
+        data:currentLoggedHotelAdminData, 
+        capitalizeFirstLetter:capitalizeFirstLetter,
+        categoryToIcon:categoryToIcon
+      });
+      return;
+    }
+    console.log(`Password invalid`);
+    res.redirect('/hotel-login?unsuccessful');
+    return;
+  }
+
+  console.log(`Could not find employee`);
+  res.redirect('/hotel-login?unsuccessful');
+  return;
+});
+
+app.get('/hotel-adm', (req,res) => {
+  res.render('hotel-admin.ejs', 
+      {
+        data:currentLoggedHotelAdminData, 
+        capitalizeFirstLetter:capitalizeFirstLetter,
+        categoryToIcon:categoryToIcon
+      });
+});
+
+app.get("/hotel-reservations", async (req, res) => {
+  res.render("hotel-reservations.ejs", {
+    data: currentLoggedHotelAdminData,
+    capitalizeFirstLetter:capitalizeFirstLetter,
+    getStayShort:getStayShort,
+    categoryToIcon:categoryToIcon
+  });
+});
+
+app.post('/hotel-update-reserv', async (req,res) => {
+  let arrivalDate = req.body.arrivalDate;
+  let departureDate = req.body.departureDate;
+  let reservId = currentSelectedRoomReservation.reservation.id;
+  let reservInfo = {
+    arrival_date:arrivalDate,
+    departure_date:departureDate,
+    id:reservId
+  };
+  console.log(`Current selected: ${JSON.stringify(currentSelectedRoomReservation, null, 2)}`);
+  console.log(`Hotel admin data: ${JSON.stringify(currentLoggedHotelAdminData, null, 2)}`);
+  
+  let didUpdateWork = updateReservationDates(reservInfo);
+  if(didUpdateWork) {
+    let arrivalDateDb = `${arrivalDate}T04:00:00.000Z`;
+    let departureDateDb = `${departureDate}T04:00:00.000Z`;
+
+    let roomIndex = currentLoggedHotelAdminData.roomIndex;
+    let reservIndex = currentLoggedHotelAdminData.reservIndex;
+    console.log(`Room Index: ${roomIndex}`);
+    console.log(`Room Index: ${reservIndex}`);
+
+    console.log(`Hotel admin roomReservations: ${JSON.stringify(currentLoggedHotelAdminData.roomReservations, null, 2)}`);
+
+    currentLoggedHotelAdminData.roomReservations[roomIndex].reservations[reservIndex].arrival_date = arrivalDateDb;
+    currentLoggedHotelAdminData.roomReservations[roomIndex].reservations[reservIndex].departure_date = departureDateDb;
+    res.redirect('/hotel-reservations?successful');
+    return;
+  }
+  res.redirect('/login');
+  return;
+});
+
+app.get('/hotel-drop-reserv', async(req, res) => {
+  let reservId = currentSelectedRoomReservation.reservation.id;
+  let didDropWork = dropReservation(reservId);
+  if(didDropWork) {
+    let roomIndex = currentLoggedHotelAdminData.roomIndex;
+    let reservIndex = currentLoggedHotelAdminData.reservIndex;
+    currentLoggedHotelAdminData.roomReservations[roomIndex].reservations.splice(reservIndex, 1);
+    currentSelectedRoomReservation = {};
+    currentLoggedHotelAdminData.roomIndex = -1;
+    currentLoggedHotelAdminData.reservIndex = -1;
+    res.redirect('/hotel-reservations?successful');
+    return;
+  }
+  
+  console.log(`Drop reservation failed`);
+  res.redirect('/login');
+  return;
+})
+
+app.get("/hotel-reserv-details", async (req, res) => {
+
+  let roomId = parseInt(req.query.roomId);
+  let reservId = parseInt(req.query.reservId);
+  console.log(`RoomId : ${roomId}, reservId : ${reservId}`);
+  
+  currentSelectedRoomReservation['room'] = currentLoggedHotelAdminData.roomReservations[roomId].room;
+  currentSelectedRoomReservation['reservation'] = currentLoggedHotelAdminData.roomReservations[roomId].reservations[reservId];
+  currentSelectedRoomReservation['client'] = currentLoggedHotelAdminData.roomReservations[roomId].reservations[reservId].client;
+  currentSelectedRoomReservation['reservIndex'] = reservId;
+  currentSelectedRoomReservation['roomIndex'] = roomId;
+
+  currentLoggedHotelAdminData['reservIndex'] = reservId;
+  currentLoggedHotelAdminData['roomIndex'] = roomId;
+  
+  let reservArrivalDate = currentSelectedRoomReservation.reservation.arrival_date;
+  let reservDepartureDate = currentSelectedRoomReservation.reservation.departure_date;
+  let reservRoomCapacity = currentSelectedRoomReservation.room.capacity;
+  let reservRoomPrice = currentSelectedRoomReservation.room;
+
+  let numberOfNights = calculateNightsBetweenDates(
+    reservArrivalDate,
+    reservDepartureDate
+  );
+
+  let arrivalDateFullDay = formatDateToReadable(reservArrivalDate);
+  let departureDateFullDay = formatDateToReadable(reservDepartureDate);
+  let nightString = capitalizeFirstLetter(getNightString(numberOfNights));
+  let personString = capitalizeFirstLetter(getPersonString(reservRoomCapacity));
+
+  
+
+  currentSelectedRoomReservation['arrivalDateFull'] = arrivalDateFullDay;
+  currentSelectedRoomReservation['departureDateFull'] = departureDateFullDay;
+  currentSelectedRoomReservation['numberOfNights'] = numberOfNights;
+  currentSelectedRoomReservation['nightString'] = nightString;
+  currentSelectedRoomReservation['personString'] = personString;
+
+  res.render(
+    "hotel-reservation-details.ejs",
+    {
+      data:currentLoggedHotelAdminData,
+      selectedReservation:currentSelectedRoomReservation,
+      capitalizeFirstLetter:capitalizeFirstLetter,
+      formatDateToYYYYMMDD:formatDateToYYYYMMDD
+    }
+    );
+});
+
+
 app.post('/employee', async(req, res) => {
   let email = req.body.email;
   let pwd = req.body.pwd;
@@ -215,6 +379,7 @@ app.post('/employee', async(req, res) => {
     if(isPwdValid) {
       let hotelData = await getHotelData(employee.hotel_id);
       currentLoggedEmployeeData = employee;
+      currentLoggedEmployeeData['pwd'] = '';
       currentLoggedEmployeeData['hotel'] = hotelData;
       currentLoggedEmployeeData['employeeSince'] = getYearFromDate(employee.created_at);
       currentLoggedEmployeeData['nas'] = formatNumberString(employee.nas);
@@ -275,12 +440,8 @@ app.get("/room", async (req, res) => {
 app.get("/contact", async (req, res) => {
   res.render("keto/contact.ejs");
 });
-app.get("/hotel-reserv-details", async (req, res) => {
-  res.render("hotel-reservation-details.ejs");
-});
-app.get("/hotel-reservations", async (req, res) => {
-  res.render("hotel-reservations.ejs");
-});
+
+
 app.get("/hotel-add-employee", async (req, res) => {
   res.render("hotel-add-employees.ejs");
 });
@@ -291,9 +452,7 @@ app.get("/hotel-add-room", async (req, res) => {
   res.render("hotel-add-room.ejs");
 });
 
-app.get("/hotel-adm", async (req, res) => {
-  res.render("hotel-admin.ejs");
-});
+
 app.get("/modify-employee", async (req, res) => {
   res.render("modify-employee-profile.ejs");
 });
@@ -511,7 +670,9 @@ app.get('/edit-employee-info', (req, res) => {
 });
 
 
-
+app.get('/hotel-login', (req, res) => {
+  res.render('hotel-adm-login.ejs');
+});
 
 app.get("/edit-info", async (req, res) => {
 
@@ -561,6 +722,7 @@ app.get("/clerk-book", async (req, res) => {
 
   res.render("clerk-book-room.ejs", { data: clerkCurrentHotelData });
 });
+
 app.post("/clerk-create-reserv", async (req, res) => {
   let newClientId = await createClient(clerkBookClientData);
   clerkBookReservationData["clientId"] = newClientId;
@@ -776,6 +938,13 @@ let currentClientReservationsData = {};
 let currentLoggedEmployeeData = {};
 // Employee Login Data 
 
+// Hotel Admin Login Data
+let currentLoggedHotelAdminData = {};
+let currentSelectedRoomReservation = {};
+
+let hash = await hashPassword('1234567890');
+console.log(`Hash: ${hash}`);
+
 
 // --------------- ** DATA ** -----------------
 
@@ -830,6 +999,41 @@ async function getHotelData(hotelId) {
   } catch (error) {
     console.error("Error while querying hotel data: ", error.stack);
     throw error;
+  }
+}
+
+async function getHotelChain(hotelChainId) {
+  try {
+    const query = `select * from hotel_chains
+        where id = $1`;
+
+    const results = await db.query(query, [hotelChainId]);
+    if (results.rows.length > 0) {
+      let hotelChain = results.rows[0];
+      return hotelChain;
+    }
+  } catch (error) {
+    console.error("Error while querying hotel chain", error.stack);
+    return [];
+  }
+}
+
+async function getHotelEmployees(hotelId) {
+  try {
+    const query = `select 
+              id, first_name, last_name, job_role, phone_number, email, created_at, 
+              hotel_id, address, is_admin
+        from employees
+        where hotel_id = $1`;
+
+    const results = await db.query(query, [hotelId]);
+    if (results.rows.length > 0) {
+      let employees = results.rows;
+      return employees;
+    }
+  } catch (error) {
+    console.error("Error while querying hotels list", error.stack);
+    return [];
   }
 }
 
@@ -978,6 +1182,68 @@ async function getUserReservations(clientId) {
   }
 }
 
+async function getHotelReservations(hotelObject) {
+  try {
+    const rooms = hotelObject.rooms;
+    let reservations = [];
+
+    for (let room of rooms) {
+      let roomId = room.id;
+      let roomReservations = await getReservationsForRoom(roomId);
+      let roomReservationsObject = {
+        room:room,
+        reservations:roomReservations
+      };
+      reservations.push(roomReservationsObject);
+    }
+  console.log(`Successfully queried reservations : ${reservations}`);
+  return reservations;
+  } catch(error) {
+    console.error(`Error while getting hotel reservations: ${error.stack}`);
+  }
+}
+
+async function getClientDataForReservation(clientId) {
+  try {
+    const query = `SELECT * from clients 
+                    WHERE id = $1`;
+    const paramValues = [clientId];
+
+    const result = await db.query(query, paramValues);
+    if (result.rows.length > 0) {
+        let client = result.rows[0];
+        client['pwd'] = '';
+        return client;
+    }
+    return []; // Return an empty array if no results
+  } catch (error) {
+    console.error("Error while querying hotels list", error.stack);
+  }
+}
+
+async function getReservationsForRoom(roomId) {
+  try {
+    const query = `SELECT * from reservations 
+                    WHERE reservations.room_id = $1`;
+    const paramValues = [roomId];
+
+    const results = await db.query(query, paramValues);
+    var reservations = [];
+    if (results.rows.length > 0) {
+        reservations = results.rows;
+        for(let [index, reservation] of reservations.entries() ){
+          let clientId = parseInt(reservation.client_id);
+          let clientData = await getClientDataForReservation(clientId);
+          reservations[index]['client'] = clientData;
+        }
+        return reservations;
+    }
+    return []; // Return an empty array if no results
+  } catch (error) {
+    console.error("Error while querying hotels list", error.stack);
+  }
+}
+
 async function getHotelDataForUserReservationsList(roomId) {
   try {
 
@@ -1101,6 +1367,26 @@ async function verifyLoginEmployeeEmail(email) {
   }
 }
 
+async function verifyHotelAdminEmail(email) {
+  const query = "select * from employees where email = $1 AND is_admin = 'YES'";
+  const paramValues = [email.toLowerCase()];
+
+  try {
+    let result = await db.query(query, paramValues);
+    if (result.rows.length > 0) {
+      console.log("Admin exists");
+      return result.rows[0];
+    } else {
+      console.log("Email is invalid");
+      return {};
+    }
+  } catch (error) {
+    console.error("Error while querying clients for login", error.stack);
+    throw error;
+    return {};
+  }
+}
+
 async function verifyPassword(password, hashedPassword) {
   try {
     const match = await bcrypt.compare(password, hashedPassword);
@@ -1114,11 +1400,6 @@ async function verifyPassword(password, hashedPassword) {
     console.error("Error verifying password:", error);
   }
 }
-let testHashPwd = await hashPassword("1234567890");
-let testVerifPwd = await verifyPassword(
-  "123456790",
-  "$2b$10$sXG30jHjz.KXOfqVPkoVyerRFsLs.6lZYoKHCJRzzwBzPbI81dONC"
-);
 
 function convertDateForDbInsert(dateString) {
   const parts = dateString.split("/");
