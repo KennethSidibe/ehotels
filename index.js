@@ -78,6 +78,19 @@ app.get("/hotel-rooms", async (req, res) => {
 
   res.render("rooms-list.ejs", { data: currentRoomsHotelPageData });
 });
+
+app.get("/hotel-rooms-list", async (req, res) => {
+
+  let rooms = getRoomsFromHotelAdminData(currentLoggedHotelAdminData);
+  currentRoomsHotelPageData = rooms;
+
+  res.render("hotel-rooms.ejs", {
+    data: currentLoggedHotelAdminData,
+    rooms:currentRoomsHotelPageData
+  });
+
+});
+
 app.post("/create-reserv", async (req, res) => {
   let userFirstName = req.body.firstName;
   let userLastName = req.body.lastName;
@@ -1112,6 +1125,19 @@ async function getHotelChain(hotelChainId) {
     console.error("Error while querying hotel chain", error.stack);
     return [];
   }
+}
+
+function getRoomsFromHotelAdminData(hotelAdminData) {
+  let roomReservations = hotelAdminData.roomReservations;
+  let rooms = [];
+  roomReservations.forEach(function(roomReservation){
+    let room = roomReservation.room;
+
+    if(room.hasOwnProperty('id')) {
+      rooms.push(room);
+    }
+  }); 
+  return rooms;
 }
 
 async function getHotelEmployees(hotelId) {
