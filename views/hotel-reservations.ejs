@@ -51,32 +51,40 @@
     <main>
         <ol class="gradient-list">
           
+          <% data.roomReservations.forEach((roomReservation, roomReservIndex) => { %>
+           <% let room = roomReservation.room; %>
+           <% let reservationsLoop = roomReservation.reservations; %>
+           <% if(reservationsLoop.length > 0) { %>
+           
+            <% reservationsLoop.forEach((reservation, index) => { %>
+            
+           
           <li>
 
             <div class="row mb-2">
 
               <div class="col d-flex flex-column">
                 <div class="col mt-3">
-                    <div class="col"> <a class="hotel-name">Kenneth Sidibe</a></div>
+                    <div class="col"> <a class="hotel-name"><%= capitalizeFirstLetter(reservation.client.first_name) %> <%= capitalizeFirstLetter(reservation.client.last_name) %> </a></div>
                 </div>
 
                 
                 <div class="row gy-1 d-flex flex-row col my-3">
                   <!-- links to google map city location  -->
                     <div class="col-6 location-type"><a class="link-secondary link-underline-opacity-25 link-opacity-50-hover" >
-                      Room name</a>
+                      <%= room.room_name %></a>
                     </div>
                     <div class="col-6 location-type"><a class="link-secondary link-underline-opacity-25 link-opacity-50-hover">
-                      +226 70 70 12 21</a>
+                      <%= reservation.client.phone_number %></a>
                     </div>
                     <div class="col location-type"><a class="link-secondary link-underline-opacity-25 link-opacity-50-hover">
-                      kennethsidibe@gmail.com</a>
+                      <%= reservation.client.email %></a>
                     </div>
                 </div>
               </div>
 
               <div class="col-3 d-flex justify-content-center align-items-center">
-                <h1>❤️</h1>
+                <h1><% categoryToIcon(data.hotel.category) %></h1>
               </div>
 
             </div>
@@ -90,10 +98,10 @@
                 <div class="col-6 d-flex flex-column-reverse">
                   <div class="row d-flex flex-column">
 
-                    <div class="col d-flex justify-content-end location-type my-1" ><div class="me-3">Avr 15 - Avr 20</div></div>
-                    <div class="col d-flex justify-content-end price my-1"><div class="me-3">300$</div></div>
+                    <div class="col d-flex justify-content-end location-type my-1" ><div class="me-3"><%= getStayShort(reservation.arrival_date, reservation.departure_date) %></div></div>
+                    <div class="col d-flex justify-content-end price my-1"><div class="me-3"><%= reservation.price %>$</div></div>
                     <div class="col d-flex justify-content-end mt-2">
-                      <button class="btn btn-primary">< Voir Réservation</button>
+                      <a href="/hotel-reserv-details?roomId=<%= roomReservIndex %>&reservId=<%= index %>"><button class="btn btn-primary">< Voir Réservation</button></a>
                     </div>
 
                   </div>
@@ -101,6 +109,9 @@
             </div>
             
         </li>
+        <% }) %>
+        <% } %>
+          <% }) %>
 
         </ol>
       </main>    
