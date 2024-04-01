@@ -69,16 +69,27 @@
   </head>
   <body>
     <div class="container w-75">
-      <form action="">
+
+      <div class="container w-50 mt-3">
+        
+      </div>
+
+
+        
         <div class="col">
           <!-- Profile Info -->
           <div class="container my-4 p-4 rounded-container rounded-4">
-            <style></style>
+            <div class="row">
+              <div class="d-flex flex-row gap-2 mb-2">
+                <p><i class="bi bi-arrow-left"></i></p>
+                <h5 class="text-primary "><a href="/hotel-adm">Retour au profil</a></h5>
+                </div>
+            </div>
             <!--  -->
             <div class="mb-5 d-flex flex-row">
               <div class="row">
-                <h3 class="mb-0">Hotel Name Chambre</h3>
-                <p class="text-body-tertiary">hotel chain: hotel chain</p>
+                <h3 class="mb-0"><%= data.hotel.hotel_name %> Chambre</h3>
+                <p class="text-body-tertiary">Chaîne d'hôtel : <%= data.hotel_chain.hotel_chain_name %></p>
               </div>
             </div>
             <!--  -->
@@ -89,67 +100,25 @@
               <h3 style="margin-bottom: 0.7em">Chambres</h3>
               <div class="row row-cols-3 gy-3">
 
-                <div class="col">
-                  <div class="card card-room not-clicked">
-                    <img
-                      src="images/room1.jpg"
-                      class="card-img-top img-fluid"
-                      alt="..."
-                    />
-                    <div class="card-body">
-                      <h5 class="card-title">Room name</h5>
-                      <p>Nombre : <span class="room-number" >40</span></p>
-                      <p class="price text-primary"><span class="price-digit" >250$</span>/Nuit</p>
-                      <a href=""><button class="btn btn-primary" >Modifier la chambre</button></a>
-                    </div>
-                  </div>
-                </div>
+                <% rooms.forEach((room, index) => { %>
 
-                <div class="col">
-                  <div class="card card-room not-clicked">
-                    <img
-                      src="images/room1.jpg"
-                      class="card-img-top img-fluid"
-                      alt="..."
-                    />
-                    <div class="card-body">
-                      <h5 class="card-title">Room name</h5>
-                      <p>Nombre : <span class="room-number" >40</span></p>
-                      <p class="price text-primary"><span class="price-digit" >250$</span>/Nuit</p>
-                      <a href=""><button class="btn btn-primary" >Modifier la chambre</button></a>
+                  <div class="col">
+                    <div class="card card-room not-clicked">
+                      <img
+                        src="images/room1.jpg"
+                        class="card-img-top img-fluid"
+                        alt="..."
+                      />
+                      <div class="card-body">
+                        <h5 class="card-title"><%= room.room_name %></h5>
+                        <p>Nombre : <span class="room-number" ><%= room.number_of_rooms_for %></span></p>
+                        <p class="price text-primary"><span class="price-digit" ><%= room.price %>$</span>/Nuit</p>
+                        <a href="/hotel-edit-room?id=<%= index %>"><button class="btn btn-primary">Modifier la chambre</button></a>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="col">
-                  <div class="card card-room not-clicked">
-                    <img
-                      src="images/room1.jpg"
-                      class="card-img-top img-fluid"
-                      alt="..."
-                    />
-                    <div class="card-body">
-                      <h5 class="card-title">Room name</h5>
-                      <p>Nombre : <span class="room-number" >40</span></p>
-                      <p class="price text-primary"><span class="price-digit" >250$</span>/Nuit</p>
-                      <a href=""><button class="btn btn-primary" >Modifier la chambre</button></a>
-                    </div>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="card card-room not-clicked">
-                    <img
-                      src="images/room1.jpg"
-                      class="card-img-top img-fluid"
-                      alt="..."
-                    />
-                    <div class="card-body">
-                      <h5 class="card-title">Room name</h5>
-                      <p>Nombre : <span class="room-number" >40</span></p>
-                      <p class="price text-primary"><span class="price-digit" >250$</span>/Nuit</p>
-                      <a href=""><button class="btn btn-primary" >Modifier la chambre</button></a>
-                    </div>
-                  </div>
-                </div>
+
+                <% }) %>
 
                 <!-- Add Room Btn -->
                 <div class="col">
@@ -171,11 +140,9 @@
                 </div>
                 <!-- Add Room Btn -->
 
-
               </div>
             </div>
             <!-- Rooms Card -->
-      </form>
     </div>
 
     <!-- JQuery CDN -->
