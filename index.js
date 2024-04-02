@@ -199,7 +199,7 @@ app.post("/user", async (req, res) => {
 
   currentLoggedClientData = client;
   currentLoggedClientData['reservations'] = userReservations;
-  currentLoggedClientData['nextReservation'] = 'undefined';
+  currentLoggedClientData['nextReservation'] = undefined;
   
   console.log(`Client data: ${JSON.stringify(currentLoggedClientData, null, 2)}`);
   
@@ -236,6 +236,8 @@ app.post("/hotel-adm", async (req, res) => {
       let hotelChain = await getHotelChain(hotelChainId);
       currentLoggedHotelAdminData['pwd'] = '';
       currentLoggedHotelAdminData = hotelAdmin;
+      currentLoggedHotelAdminData.pwd = '';
+      currentLoggedHotelAdminData.nas = '';
       currentLoggedHotelAdminData['hotel_chain'] = hotelChain;
       currentLoggedHotelAdminData['hotel'] = hotelData;
       currentLoggedHotelAdminData['employees'] = hotelEmployees;
@@ -408,7 +410,7 @@ app.post('/hotel-update-room', async (req,res) => {
     currentLoggedHotelAdminData.roomReservations[roomIndex].room.room_type = roomType;
     currentLoggedHotelAdminData.roomReservations[roomIndex].room.price = roomPrice;
     currentLoggedHotelAdminData.roomReservations[roomIndex].room.commodity = roomCommodity;
-    currentLoggedHotelAdminData.roomReservations[roomIndex].room.view = roomView;
+    currentLoggedHotelAdminData.roomReservations[roomIndex].room.room_view = roomView;
     currentLoggedHotelAdminData.roomReservations[roomIndex].room.extensions = roomExtension;
     currentLoggedHotelAdminData.roomReservations[roomIndex].room.number_of_rooms_for = numberOfRooms;
     currentLoggedHotelAdminData.roomReservations[roomIndex].room.room_name = roomName;
@@ -485,6 +487,74 @@ app.get("/hotel-reserv-details", async (req, res) => {
       formatDateToYYYYMMDD:formatDateToYYYYMMDD
     }
     );
+});
+
+app.get('/hotel-add-room', (req, res) => {
+  res.render(
+    'hotel-add-room.ejs',
+    {
+      hotelName:currentLoggedHotelAdminData.hotel.hotel_name
+    }
+  );
+});
+
+app.post('/hotel-add-room', async(req, res) => {
+  
+  let hotelId = currentLoggedHotelAdminData.hotel.id;
+  let hotelChainId = currentLoggedHotelAdminData.hotel_chain.id;
+  let roomType = req.body.roomType;
+  let roomPrice = parseInt(req.body.roomPrice);
+  let roomCommodity = req.body.roomCommodity; 
+  let roomCapacity = parseInt(req.body.roomCapacity); 
+  let roomView = req.body.roomView;
+  let roomExtension = req.body.roomExtension
+  let numberOfRooms = parseInt(req.body.numberOfRooms);
+  let roomName = req.body.roomName;
+  let roomInfo = {
+    roomType:roomType,
+    roomPrice:roomPrice,
+    roomCommodity:roomCommodity,
+    roomCapacity:roomCapacity,
+    roomView:roomView,
+    roomExtension:roomExtension,
+    numberOfRooms:numberOfRooms,
+    roomName:roomName,
+    hotelId:hotelId,
+    hotelChainId:hotelChainId
+  };
+  
+  let newRoomId = await addRoom(roomInfo);
+  if(newRoomId > 0) {
+
+    let newRoom = {
+      id:newRoomId,
+      room_type:roomType,
+      price:roomPrice,
+      commodity:roomCommodity === 'no-value' || roomCommodity === undefined ? null : roomCommodity,
+      capacity:roomCapacity,
+      room_view: roomView === 'no-value' || roomView === undefined ? null : roomView,
+      extensions: roomExtension === 'no-value' || roomExtension === undefined ? null : roomExtension,
+      repairs: null,
+      hotel_id:hotelId,
+      hotel_chain_id:hotelChainId,
+      room_number: 777,
+      room_floor: 7,
+      number_of_rooms_for: numberOfRooms,
+      room_name:roomName,
+    };
+
+    let newRoomReservations = {
+      room:newRoom,
+      reservations:[]
+    };
+
+    currentLoggedHotelAdminData.roomReservations.push(newRoomReservations) ;
+    
+    res.redirect('/hotel-rooms-list?successful');
+    return;
+  }
+  res.redirect('/hotel-login');
+  return;
 });
 
 
@@ -822,7 +892,7 @@ async function updateRoomInfo(roomData) {
     price = $2, 
     commodity = $3, 
     capacity = $4, 
-    view = $5,
+    room_view = $5,
     extensions = $6, 
     number_of_rooms_for = $7, 
     room_name = $8
@@ -830,10 +900,10 @@ async function updateRoomInfo(roomData) {
     const paramValues = [
       roomData.roomType, 
       roomData.roomPrice, 
-      roomData.roomCommodity === 'no-value' ? null : roomData.roomCommodity, 
+      roomData.roomCommodity === 'no-value' || roomData.roomCommodity ===  undefined ? null : roomData.roomCommodity, 
       roomData.roomCapacity, 
-      roomData.roomView === 'no-value' ? null : roomData.roomView, 
-      roomData.roomExtension === 'no-value' ? null : roomData.roomExtension,
+      roomData.roomView === 'no-value' || roomData.roomView === undefined ? null : roomData.roomView, 
+      roomData.roomExtension === 'no-value' || roomData.roomExtension === undefined ? null : roomData.roomExtension,
       roomData.numberOfRooms,
       roomData.roomName,
       roomData.id
@@ -854,6 +924,70 @@ async function updateRoomInfo(roomData) {
     } catch (error) {
       console.error(`Error while updating user profile : ${error.stack}`);
       return false;
+    }
+}
+async function addRoom(roomData) {
+  const query = `INSERT INTO rooms 
+  (
+    room_type, 
+    price, 
+    commodity, 
+    capacity, 
+    room_view, 
+    extensions, 
+    number_of_rooms_for,
+    room_name, 
+    repairs, 
+    hotel_id, 
+    hotel_chain_id, 
+    room_number, 
+    room_floor)
+
+    VALUES( 
+      $1, 
+      $2, 
+      $3, 
+      $4, 
+      $5,
+      $6, 
+      $7, 
+      $8,
+      $9,
+      $10,
+      $11,
+      $12,
+      $13
+    )
+    RETURNING id;`;
+    console.log(`room number: ${roomData.roomNumber}`);
+    const paramValues = [
+      roomData.roomType, 
+      roomData.roomPrice, 
+      roomData.roomCommodity === 'no-value' || roomData.roomCommodity === undefined ? null : roomData.roomCommodity, 
+      roomData.roomCapacity, 
+      roomData.roomView === 'no-value' || roomData.roomView === undefined ? null : roomData.roomView, 
+      roomData.roomExtension === 'no-value' || roomData.roomExtension === undefined ? null : roomData.roomExtension,
+      roomData.numberOfRooms,
+      roomData.roomName,
+      roomData.repairs === 'no-value' || roomData.repairs === undefined ? null : roomData.repairs,
+      roomData.hotelId,
+      roomData.hotelChainId,
+      roomData.roomNumber === undefined ? 777 : roomData.roomNumber,
+      roomData.roomFloor === undefined ? 7 : roomData.roomFloor
+    ];
+
+    try {
+      const result = await db.query(query, paramValues);
+      if (typeof(result.rows[0].id) === "number") {
+        console.log(`Room added successfully`);
+        return parseInt(result.rows[0].id);
+      }
+      // row was not added 
+      console.log(`Room could not get added`);
+      return -1;
+    } catch (error) {
+      console.error(`Error while adding room data to db : ${error.stack}`);
+      return -1;
     }
 }
 
@@ -1284,7 +1418,7 @@ async function createClient(clientData) {
   try {
     const result = await db.query(query, paramValues);
     const newClientId = result.rows[0].id;
-    if (typeof newClientId === "number") {
+    if (typeof(newClientId) === "number") {
       return parseInt(newClientId);
     } else {
       console.error("Error inserting new client:", error.message);
@@ -1326,9 +1460,10 @@ async function createReservation(reservationData) {
 
   try {
     let result = await db.query(query, paramValues);
-    if (typeof result.rows[0].id === "number") {
+    if (typeof(result.rows[0].id) === "number") {
       return parseInt(result.rows[0].id);
     }
+    return -1;
   } catch (error) {
     console.error(`Error while inserting new reservations : ${error.stack}`);
     throw error;
@@ -1886,7 +2021,7 @@ function formatDateWithDashToFullDay(dateString) {
 }
 
 function capitalizeFirstLetter(string) {
-    if (typeof string !== 'string' || string.length === 0) {
+    if (typeof(string) !== 'string' || string.length === 0) {
         return '';
     }
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
