@@ -34,22 +34,22 @@ $(document).ready(function() {
          
     }
 
-    function validateRoomType(roomType, roomTypeInputId, roomTypeErrorId, roomTypeErrorMsg) {
-        const noValueRoomTypeString = 'no-value';
+    function validateRequiredSelectedInput(selectInput, selectInputInputId, selectInputErrorId, selectInputErrorMsg) {
+        const noValueRequiredString = 'no-value';
         let isInputExactToOneSelected = false;
-        $('#' + roomTypeInputId + ' option').each(function() {
-            if(roomType.toLowerCase() === $(this).val().toLowerCase()) {
+        $('#' + selectInputInputId + ' option').each(function() {
+            if(selectInput.toLowerCase() === $(this).val().toLowerCase()) {
                 isInputExactToOneSelected = true;
             }
         });
-        if(roomType.toLowerCase() === noValueRoomTypeString){
+        if(selectInput.toLowerCase() === noValueRequiredString){
             isInputExactToOneSelected = false;
         }
         if(!isInputExactToOneSelected) {
-            showError(roomTypeErrorId, roomTypeErrorMsg, roomTypeInputId);
+            showError(selectInputErrorId, selectInputErrorMsg, selectInputInputId);
             return false;
         }
-        hideError(roomTypeErrorId);
+        hideError(selectInputErrorId);
         return true;  
     
     }
@@ -92,8 +92,8 @@ $(document).ready(function() {
         let roomNameValid = hasValue(formRoomName, ROOM_NAME_REQUIRED, ROOM_NAME_ERROR_ID, ROOM_NAME_INPUT_ID);
         let roomPriceValid = validatenumberInput(formRoomPrice, ROOM_PRICE_REQUIRED, ROOM_PRICE_ERROR_ID, ROOM_PRICE_INPUT_ID);
         let numbersOfRoomsValid = validatenumberInput(formNumberOfRooms, NUMBER_OF_ROOMS_REQUIRED, NUMBER_OF_ROOMS_ERROR_ID, NUMBER_OF_ROOMS_INPUT_ID);
-        let roomTypeValid = validateRoomType(formRoomType, ROOM_TYPE_INPUT_ID, ROOM_TYPE_ERROR_ID, ROOM_TYPE_REQUIRED);
-        let roomCapacityValid = validateSelectInput(formRoomCapacity, ROOM_CAPACITY_INPUT_ID, ROOM_CAPACITY_ERROR_ID, ROOM_CAPACITY_REQUIRED);
+        let roomTypeValid = validateRequiredSelectedInput(formRoomType, ROOM_TYPE_INPUT_ID, ROOM_TYPE_ERROR_ID, ROOM_TYPE_REQUIRED);
+        let roomCapacityValid = validateRequiredSelectedInput(formRoomCapacity, ROOM_CAPACITY_INPUT_ID, ROOM_CAPACITY_ERROR_ID, ROOM_CAPACITY_REQUIRED);
         let roomCommodityValid = validateSelectInput(formRoomCommodity, ROOM_COMMODITY_INPUT_ID, ROOM_COMMODITY_ERROR_ID, SELECT_ERROR_REQUIRED);
         let roomViewValid = validateSelectInput(formRoomView, ROOM_VIEW_INPUT_ID, ROOM_VIEW_ERROR_ID, SELECT_ERROR_REQUIRED);
         let roomExtensionValid = validateSelectInput(formRoomExtension, ROOM_EXTENSION_INPUT_ID, ROOM_EXTENSION_ERROR_ID, SELECT_ERROR_REQUIRED);
