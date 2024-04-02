@@ -89,7 +89,7 @@
   </head>
   <body>
     <div class="container w-75">
-      <form action="#" id="modifyRoomForm">
+      <form action="/hotel-update-room" id="modifyRoomForm" method="post">
         
         <div class="col">
           <!-- Profile Info -->
@@ -173,7 +173,7 @@
                 <div class="col">
                   <label for="roomType" class="form-label">Type</label>
                   <select class="form-select" id="roomTypeInput" aria-label="Default select example">
-                    <option selected value="normal">Selectionner le type de la chambre</option>
+                    <option selected value="no-value">Selectionner le type de la chambre</option>
                     <option value="luxe">Luxe</option>
                     <option value="normal">Normal</option>
                     <option value="éco">Éco</option>
@@ -204,8 +204,8 @@
                   <label for="Commodity" class="form-label"
                     >Commodité
                   </label>
-                  <select class="form-select" id="commodityInput" aria-label="Default select example">
-                    <option selected value="commodité">Commodité</option>
+                  <select class="form-select" id="roomCommodityInput" aria-label="Default select example">
+                    <option selected value="no-value">Commodité</option>
                     <option value="machine à café">machine à café</option>
                   </select>
                   <div
@@ -217,8 +217,8 @@
                   <label for="View" class="form-label"
                     >Vue
                   </label>
-                  <select class="form-select" id="viewInput" aria-label="Default select example">
-                    <option selected value="vue">Vue</option>
+                  <select class="form-select" id="roomViewInput" aria-label="Default select example">
+                    <option selected value="no-value">Vue</option>
                     <option value="sur la mer">Sur la mer</option>
                   </select>
                   <div
@@ -230,8 +230,8 @@
                   <label for="Extensions" class="form-label"
                     >Extensions
                   </label>
-                  <select class="form-select" id="extensionInput" aria-label="Default select example">
-                    <option selected value="extension">Extensions</option>
+                  <select class="form-select" id="roomExtensionInput" aria-label="Default select example">
+                    <option selected value="no-value">Extensions</option>
                     <option value="Balcon chauffé">Balcon chauffé</option>
                   </select>
                   <div
@@ -281,7 +281,6 @@
     <!-- JQuery CDN -->
 
     <!-- Page Script -->
-    <script src="js/clerk-book-room-script.js"></script>
     <script src="js/validateForm-modify-room.js"></script>
     <!-- Page Script -->
   </body>
