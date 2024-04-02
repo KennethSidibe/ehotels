@@ -374,7 +374,48 @@ app.post('/hotel-update-reserv', async (req,res) => {
     res.redirect('/hotel-reservations?successful');
     return;
   }
-  res.redirect('/login');
+  res.redirect('/hotel-login');
+  return;
+});
+app.post('/hotel-update-room', async (req,res) => {
+
+  let dbRoomId = currentSelectedRoomData.id;
+  let roomType = req.body.roomType;
+  let roomPrice = req.body.roomPrice;
+  let roomCommodity = req.body.roomCommodity; 
+  let roomCapacity = req.body.roomCapacity; 
+  let roomView = req.body.roomView;
+  let roomExtension = req.body.roomExtension
+  let numberOfRooms = req.body.numberOfRooms;
+  let roomName = req.body.roomName;
+  let roomInfo = {
+    roomType:roomType,
+    roomPrice:roomPrice,
+    roomCommodity:roomCommodity,
+    roomCapacity:roomCapacity,
+    roomView:roomView,
+    roomExtension:roomExtension,
+    numberOfRooms:numberOfRooms,
+    roomName:roomName,
+    id:dbRoomId
+  };
+  
+  let didUpdateWork = await updateRoomInfo(roomInfo);
+  if(didUpdateWork) {
+
+    let roomIndex = currentSelectedRoomIndex;
+
+    currentLoggedHotelAdminData.roomReservations[roomIndex].room.room_type = roomType;
+    currentLoggedHotelAdminData.roomReservations[roomIndex].room.price = roomPrice;
+    currentLoggedHotelAdminData.roomReservations[roomIndex].room.commodity = roomCommodity;
+    currentLoggedHotelAdminData.roomReservations[roomIndex].room.view = roomView;
+    currentLoggedHotelAdminData.roomReservations[roomIndex].room.extensions = roomExtension;
+    currentLoggedHotelAdminData.roomReservations[roomIndex].room.number_of_rooms_for = numberOfRooms;
+    currentLoggedHotelAdminData.roomReservations[roomIndex].room.room_name = roomName;
+    res.redirect('/hotel-rooms-list?successful');
+    return;
+  }
+  res.redirect('/hotel-login');
   return;
 });
 
@@ -393,7 +434,7 @@ app.get('/hotel-drop-reserv', async(req, res) => {
   }
 
   console.log(`Drop reservation failed`);
-  res.redirect('/login');
+  res.redirect('/hotel-login');
   return;
 })
 
@@ -619,7 +660,7 @@ app.post('/update-employee', async(req, res) => {
     res.redirect('/successful-modify-employee-profile');
     return;
   } else {
-    res.redirect('/login');
+    res.redirect('/employee-login');
     return;
   }
 });
@@ -666,7 +707,7 @@ app.post('/hotel-update-employee', async(req, res) => {
     res.redirect('/hotel-employees');
     return;
   } else {
-    res.redirect('/login');
+    res.redirect('/hotel-login');
     return;
   }
 });
@@ -768,6 +809,46 @@ async function updateEmployeeInfo(employeeData) {
         return false;
       }
       
+      // row was updated 
+      return true;
+    } catch (error) {
+      console.error(`Error while updating user profile : ${error.stack}`);
+      return false;
+    }
+}
+async function updateRoomInfo(roomData) {
+  const query = `UPDATE rooms 
+    SET room_type = $1, 
+    price = $2, 
+    commodity = $3, 
+    capacity = $4, 
+    view = $5,
+    extensions = $6, 
+    number_of_rooms_for = $7, 
+    room_name = $8
+    WHERE id = $9`;
+    const paramValues = [
+      roomData.roomType, 
+      roomData.roomPrice, 
+      roomData.roomCommodity === 'no-value' ? null : roomData.roomCommodity, 
+      roomData.roomCapacity, 
+      roomData.roomView === 'no-value' ? null : roomData.roomView, 
+      roomData.roomExtension === 'no-value' ? null : roomData.roomExtension,
+      roomData.numberOfRooms,
+      roomData.roomName,
+      roomData.id
+    ];
+
+    console.log(`Param values : ${JSON.stringify(paramValues, null, 2)}`);
+
+    try {
+      const result = await db.query(query, paramValues);
+      if(result.rowCount <= 0 ) {
+        // No rows Updated
+        console.log(`No room was updated`);
+        return false;
+      }
+      console.log(`Room updated successfully`);
       // row was updated 
       return true;
     } catch (error) {
