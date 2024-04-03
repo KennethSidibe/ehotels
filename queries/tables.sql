@@ -3,7 +3,8 @@ create table hotel_chains(
 	hotel_chain_name text not null,
 	address text not null,
 	email varchar(100) not null,
-	phone_number varchar(20) not null
+	phone_number varchar(20) not null,
+	icon varchar(20) not null
 );
 
 create table hotels(
@@ -16,6 +17,8 @@ create table hotels(
 	category text,
 	hotel_chain_id int not null references hotel_chains (id)  -- FK 
 );
+alter table clients add constraint UQ_Email unique(email);
+
 
 create table employees(
 	id serial primary key,
@@ -26,8 +29,12 @@ create table employees(
 	email text not null,
 	nas varchar(15) not null,
 	created_at timestamp not null default current_timestamp,
-	hotel_id int not null references hotels(id)
+	hotel_id int not null references hotels(id),
+	pwd text not null,
+	address text,
+	is_admin varchar(3) not null
 );
+alter table employees add constraint UQ_Employee_Email unique(email);
 
 create table rooms(
 	id serial primary key,
@@ -36,7 +43,7 @@ create table rooms(
 	room_number int not null,
 	room_floor int not null,
 	commodity text,
-	capacity int,
+	capacity int not null,
 	view text,
 	extensions text,
 	repairs text,
@@ -44,8 +51,6 @@ create table rooms(
 	hotel_id int not null references hotels(id),
 	hotel_chain_id int not null references hotel_chains(id)
 );
-alter table rooms 
-ADD CONSTRAINT UC_Room unique (room_number, hotel_id);
 
 -- A room is identified by the hotel chain and the hotel id or just its room id which is unique
 
@@ -65,10 +70,10 @@ create table clients(
 	id serial primary key,
 	first_name text not null,
 	last_name text not null,
-	email text not null,
-	phone_number text,
-	address text,
+	address text not null,
 	created_at timestamp not null default current_timestamp
+	email text not null,
+	phone_number text not null,
 );
 
 -- How to backup postgresql database using terminal (WIN):
@@ -85,3 +90,10 @@ create table clients(
 -- run this with terminal (WIN)
 
 -- pg_dump --schema-only -p 5433 -U postgres ehotels > create-tables.sql
+
+-- Get the sql code to have all the insert statement to have exactly the same db 
+-- run this with terminal (WIN)
+-- make sure to have pg_dump and pg_restore in your PATH ENVIRONMENT VARIABLE
+
+-- pg_dump -U username -d dbname --column-inserts --data-only > dump.sql
+-- pg_dump -U postgres -d ehotels --column-inserts --data-only > insertAllData.sql
