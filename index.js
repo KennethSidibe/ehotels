@@ -1065,6 +1065,8 @@ async function addRoom(roomData) {
 }
 
 async function addEmployee(employeeData) {
+  let hashedPwd = await hashPassword(employeeData.pwd);
+  let fullAddress = `${employeeData.streetName}, ${employeeData.city}, ${employeeData.country}, ${employeeData.zipCode}`;
   const query = `INSERT INTO employees 
   (
     first_name, 
@@ -1100,8 +1102,8 @@ async function addEmployee(employeeData) {
       employeeData.email, 
       employeeData.nas, 
       employeeData.hotelId, 
-      employeeData.pwd, 
-      employeeData.address, 
+      hashedPwd, 
+      fullAddress, 
       employeeData.isAdmin
     ];
 
@@ -1119,8 +1121,6 @@ async function addEmployee(employeeData) {
       return -1;
     }
 }
-
-
 
 app.get('/edit-employee-info', (req, res) => {
   console.log(`Employee data: ${JSON.stringify(currentLoggedEmployeeData, null, 2)}`);
