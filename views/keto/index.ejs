@@ -95,7 +95,7 @@
       <!-- end header inner -->
       <!-- end header -->
 
-      <div class="container my-5" id="thanks-container" >
+      <div class="hide container my-5" id="thanks-container" >
          <div class="row text-center">
             <div class="col">
                <h1 >Merci d'avoir réserver! 🥳</h1>
@@ -140,18 +140,28 @@
                   <div class="col-md-5">
                      <div class="book_room">
                         <h1>Book a Room Online</h1>
-                        <form class="book_now">
+                        <form action="/rooms" id="userPickDateForm" class="book_now" method="post">
                            <div class="row">
                               <div class="col-md-12">
-                                 <span>Arrival</span>
-                                 <input type="text" id="arrivalDatePicker" class="date online_book" readonly="readonly" placeholder="Arrival Date: 24 Avril 2024">
+                                 <span>Arrivée</span>
+                                 <input type="text" id="arrivalDateInput" name="arrivalDate" class="date online_book marginBottomError" readonly="readonly" placeholder="Date d'arrivée">
+                                 <div
+                                 id="arrivalDateError"
+                                 class="hide form-text fw-medium"
+                                 style="color:#ff5249; margin-bottom:1rem;"
+                               ></div>
                               </div>
                               <div class="col-md-12">
-                                 <span>Departure</span>
-                                 <input type="text" id="departureDatePicker" class="date online_book" readonly="readonly" placeholder="Departure Date: 30 Avril 2024">
+                                 <span>Départ</span>
+                                 <input type="text" id="departureDateInput" name="departureDate" class="date online_book marginBottomError" readonly="readonly" placeholder="Date de départ">
+                                 <div
+                                 id="departureDateError"
+                                 class="hide form-text fw-medium"
+                                 style="color:#ff5249; margin-bottom:1rem;"
+                               ></div>
                               </div>
                               <div class="col-md-12">
-                                 <button class="book_btn">Book Now</button>
+                                 <button type="submit" class="book_btn">Réserve</button>
                               </div>
                            </div>
                         </form>
@@ -165,7 +175,7 @@
 
 
       <!-- our_room -->
-      <div  class="our_room">
+      <!-- <div  class="our_room">
          <div class="container">
             <div class="row">
                <div class="col-md-12">
@@ -244,10 +254,11 @@
                </div>
             </div>
          </div>
-      </div>
+      </div> -->
       <!-- end our_room -->
+
       <!-- gallery -->
-      <div  class="gallery">
+      <!-- <div  class="gallery">
          <div class="container">
             <div class="row">
                <div class="col-md-12">
@@ -299,11 +310,11 @@
                </div>
             </div>
          </div>
-      </div>
+      </div> -->
       <!-- end gallery -->
 
       <!--  contact -->
-      <div class="contact">
+      <!-- <div class="contact">
          <div class="container">
             <div class="row">
                <div class="col-md-12">
@@ -343,9 +354,10 @@
                </div>
             </div>
          </div>
-      </div>
+      </div> -->
       <!-- end contact -->
       <!--  footer -->
+      
       <footer>
          <div class="footer">
             <div class="container">
@@ -412,5 +424,6 @@
       <script src="keto/js/custom.js"></script>
       <script src="keto/index-js/index-view.js"></script>
       <script src=js/home-page-script.js ></script>
+      <script src=js/validate-home-page-date-picker.js ></script>
    </body>
 </html>
