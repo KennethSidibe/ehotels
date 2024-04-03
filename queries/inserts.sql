@@ -184,6 +184,30 @@ values (
 
 -- some clients 
 
+-- Data for Name: clients; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO public.clients (id,
+first_name,
+last_name, 
+address, 
+created_at, 
+email, 
+phone_number, 
+pwd
+) 
+VALUES (
+	2, 
+	'Soure', 
+	'Yiri', 
+	'120 boulevard de la poussiA"re, Ouagadougou, Burkina Faso, S7P 1G6',
+	'2024-03-21 23:45:15.536098', 
+	'soureleboss@gmail.com', 
+	'+22687789060', 
+	'$2b$10$663HnZ7gLKvtkfuEK6iEb.wMXdmju8TadosQGizW3UWc00PeC1dtK'
+	);
+
+
 insert into clients (first_name, last_name, address, email) 
 values (
 	'Soure',
