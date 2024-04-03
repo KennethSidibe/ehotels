@@ -1,24 +1,24 @@
 // code for date picker to work
 // needs jquery and jqueryui
 
-$("#arrivalDatePicker").datepicker({
+$("#arrivalDateInput").datepicker({
     firstDay: 1,
     showOtherMonths: true,
     changeMonth: true,
     changeYear: true,
-    dateFormat: "dd.mm.yy"
+    dateFormat: "dd/mm/yy"
   });
   
   $(".date").mousedown(function() {
     $(".ui-datepicker").addClass("active");
   });
   
-$("#departureDatePicker").datepicker({
+$("#departureDateInput").datepicker({
     firstDay: 1,
     showOtherMonths: true,
     changeMonth: true,
     changeYear: true,
-    dateFormat: "dd.mm.yy"
+    dateFormat: "dd/mm/yy"
   });
   
   $(".date").mousedown(function() {
