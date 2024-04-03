@@ -86,7 +86,11 @@
                 <div class="d-flex flex-row gap-2 mb-2">
                   <p><i class="bi bi-arrow-left"></i></p>
                   <h5 class="text-primary">
+                    <% if(locals.backToProfile) { %>
+                    <a href="/hotel-adm">Retour au profil</a>
+                    <% } else {  %>
                     <a href="/hotel-rooms-list">Retour aux chambres</a>
+                    <% } %>
                   </h5>
                 </div>
                 <h3 class="mb-0">Ajouter une chambre</h3>
