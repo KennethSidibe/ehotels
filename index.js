@@ -318,6 +318,9 @@ app.get('/hotel-edit-employee', (req,res) => {
 
   )
 });
+app.get('/hotel-delete-room', (req,res) => {
+
+});
 
 app.get('/hotel-edit-room', (req,res) => {
   let roomIndex = parseInt(req.query.id);
@@ -376,7 +379,7 @@ app.post('/hotel-update-reserv', async (req,res) => {
     res.redirect('/hotel-reservations?successful');
     return;
   }
-  res.redirect('/hotel-login');
+  res.redirect('/logout?userType=hotelAdmin');
   return;
 });
 app.post('/hotel-update-room', async (req,res) => {
@@ -417,7 +420,7 @@ app.post('/hotel-update-room', async (req,res) => {
     res.redirect('/hotel-rooms-list?successful');
     return;
   }
-  res.redirect('/hotel-login');
+  res.redirect('/logout?userType=hotelAdmin');
   return;
 });
 
@@ -436,7 +439,7 @@ app.get('/hotel-drop-reserv', async(req, res) => {
   }
 
   console.log(`Drop reservation failed`);
-  res.redirect('/hotel-login');
+  res.redirect('/logout?userType=hotelAdmin');
   return;
 })
 
@@ -490,10 +493,15 @@ app.get("/hotel-reserv-details", async (req, res) => {
 });
 
 app.get('/hotel-add-room', (req, res) => {
+  let backToProfileLink = false;
+  if(req.query.backToProfile) {
+    backToProfileLink = true;
+  }
   res.render(
     'hotel-add-room.ejs',
     {
-      hotelName:currentLoggedHotelAdminData.hotel.hotel_name
+      hotelName:currentLoggedHotelAdminData.hotel.hotel_name,
+      backToProfile:backToProfileLink
     }
   );
 });
@@ -553,7 +561,7 @@ app.post('/hotel-add-room', async(req, res) => {
     res.redirect('/hotel-rooms-list?successful');
     return;
   }
-  res.redirect('/hotel-login');
+  res.redirect('/logout?userType=hotelAdmin');
   return;
 });
 
@@ -592,7 +600,6 @@ app.post('/employee', async(req, res) => {
   return;
   
 });
-
 
 app.post("/rooms", async (req, res) => {
   userArrivalDate = req.body.arrivalDate;
@@ -634,8 +641,15 @@ app.get("/contact", async (req, res) => {
 
 
 app.get("/hotel-add-employee", async (req, res) => {
-  res.render("hotel-add-employees.ejs");
+  res.render("modify-employee-profile.ejs",
+  {
+    isHotelAdding:true,
+    hotelName:currentLoggedHotelAdminData['hotel'].hotel_name
+  }
+  );
 });
+
+
 app.get("/hotel-modify-room", async (req, res) => {
   res.render("hotel-modify-room.ejs");
 });
@@ -685,11 +699,9 @@ app.post('/update-user', async (req, res) => {
       res.redirect('/successful-modify-user-profile');
       return;
     } else {
-      res.redirect('/login');
+      res.redirect('/logout?userType=user');
       return;
     }
-    
-
 });
 
 app.post('/update-employee', async(req, res) => {
@@ -730,7 +742,68 @@ app.post('/update-employee', async(req, res) => {
     res.redirect('/successful-modify-employee-profile');
     return;
   } else {
-    res.redirect('/employee-login');
+    res.redirect('/logout?userType=employee');
+    return;
+  }
+});
+
+app.post('/hotel-add-employee', async(req, res) => {
+  
+  let firstName = req.body.firstName;
+  let lastName = req.body.lastName;
+  let nas = req.body.nas;
+  let email = req.body.email;
+  let pwd = req.body.pwd;
+  let phoneNumber = req.body.phoneNumber;
+  let streetName = req.body.streetName;
+  let city = req.body.city;
+  let country = req.body.country;
+  let zipCode = req.body.zipCode;
+  let jobRole = req.body.jobRole;
+  let hotelId = currentLoggedHotelAdminData.hotel.id;
+  let isAdmin = (req.body.isAdmin).toUpperCase();
+
+  let employeeData = {
+    firstName: firstName,
+    lastName:lastName,
+    jobRole:jobRole,
+    nas:nas,
+    email: email,
+    pwd:pwd,
+    phoneNumber:phoneNumber,
+    streetName:streetName,
+    city: city,
+    hotelId:hotelId,
+    country:country,
+    zipCode:zipCode,
+    isAdmin:isAdmin
+  };
+
+  let newEmployeeId = await addEmployee(employeeData);
+
+  if(newEmployeeId > 0) {
+
+    let newEmployee = {
+      id:newEmployeeId,
+      first_name:firstName,
+      last_name:lastName,
+      job_role:jobRole,
+      phone_number:phoneNumber,
+      email:email,
+      created_at: `${new Date().toISOString()}`,
+      nas:nas,
+      hotel_id:hotelId,
+      pwd:'',
+      address: `${streetName}, ${city}, ${country}, ${zipCode}`,
+      isAdmin:isAdmin
+    };
+
+    currentLoggedHotelAdminData.employees.push(newEmployee);
+
+    res.redirect('/hotel-employees');
+    return;
+  } else {
+    res.redirect('/logout?userType=hotelAdmin');
     return;
   }
 });
@@ -777,7 +850,7 @@ app.post('/hotel-update-employee', async(req, res) => {
     res.redirect('/hotel-employees');
     return;
   } else {
-    res.redirect('/hotel-login');
+    res.redirect('/logout?userType=hotelAdmin');
     return;
   }
 });
@@ -809,7 +882,7 @@ app.post('/update-user-reserv', async(req, res) => {
     return;
   } 
 
-  res.redirect('/login');
+  res.redirect('/logout?userType=user');
   return;
   
 });
@@ -991,6 +1064,62 @@ async function addRoom(roomData) {
     }
 }
 
+async function addEmployee(employeeData) {
+  const query = `INSERT INTO employees 
+  (
+    first_name, 
+    last_name, 
+    job_role, 
+    phone_number, 
+    email, 
+    nas, 
+    hotel_id,
+    pwd, 
+    address, 
+    is_admin
+    )
+
+  VALUES( 
+    $1, 
+    $2, 
+    $3, 
+    $4, 
+    $5,
+    $6, 
+    $7, 
+    $8,
+    $9,
+    $10
+  )
+    RETURNING id;`;
+    const paramValues = [
+      employeeData.firstName, 
+      employeeData.lastName, 
+      employeeData.jobRole, 
+      employeeData.phoneNumber, 
+      employeeData.email, 
+      employeeData.nas, 
+      employeeData.hotelId, 
+      employeeData.pwd, 
+      employeeData.address, 
+      employeeData.isAdmin
+    ];
+
+    try {
+      const result = await db.query(query, paramValues);
+      if (typeof(result.rows[0].id) === "number") {
+        console.log(`Employee added successfully`);
+        return parseInt(result.rows[0].id);
+      }
+      // row was not added 
+      console.log(`Employee could not get added`);
+      return -1;
+    } catch (error) {
+      console.error(`Error while adding employee data to db : ${error.stack}`);
+      return -1;
+    }
+}
+
 
 
 app.get('/edit-employee-info', (req, res) => {
@@ -1009,6 +1138,72 @@ app.get('/edit-employee-info', (req, res) => {
     data:currentLoggedEmployeeData,
     capitalizeFirstLetter:capitalizeFirstLetter
   });
+
+});
+
+app.get('/logout', async(req, res) => {
+  let userType = req.query.userType !== 'undefined' ? req.query.userType : '';
+  let redirectLink = '';
+  switch (userType) {
+    case 'employee':
+      redirectLink = 'employee-login';
+      break;
+    case 'hotel-admin':
+      redirectLink = 'hotel-login';
+    case 'user':
+      redirectLink = 'login';
+      break;
+    default:
+      redirectLink = 'login';
+      break;
+  }
+  // ------------ RESETING ALL DATA
+
+  // logout client
+  currentLoggedClientData = {};
+  currentClientReservationsData = {};
+  currentReservationSelectedData = {};
+  currentReservSelectedIndex = -1;
+  hotelsListData = [];
+  userArrivalDate = "";
+  userDepartureDate = "";
+  numberOfNights = 0;
+  currentHotelChainId = 0;
+  currentHotelId = 0;
+  currentReservationId = 0;
+  currentRoomId = 0;
+  currentClientId = 0;
+  currentStay = "";
+  currentStayPrice = 0;
+  currentPersonString = "";
+  currentNightString = "";
+  currentArrivalDateString = "";
+  currentDepartureDateString = "";
+  currentHotelSelected = {};
+  recommendRoomSelected = {};
+  currentRoomSelected = {};
+  currentRoomsHotelPageData = {};
+  // logout client
+  
+  // logout employee 
+  currentLoggedEmployeeData = {}
+  clerkBookClientData = {};
+  clerkBookReservationData = {};
+  clerkConfirmDetails = {};
+  clerkCurrentHotelData = {};
+  // logout employee
+
+  // logout admin
+  currentLoggedHotelAdminData = {};
+  currentSelectedRoomReservation = {};
+  currentSelectedEmployeeData = {};
+  currentSelectedEmployeeIndex = -1;
+  currentSelectedRoomIndex = -1;
+  currentSelectedRoomData = {};
+  // ------------ RESETING ALL DATA
+
+  res.redirect(`/${redirectLink}`);
+  return;
 
 });
 
@@ -1168,6 +1363,7 @@ app.post("/clerk-confirm", async (req, res) => {
     employeeData: employeeData
   });
 });
+
 app.get("/reserv-details", async (req, res) => {
   
   let reservSelectedId = parseInt(req.query.id);
@@ -1274,7 +1470,7 @@ let currentLoggedClientData = {};
 let currentClientReservationsData = {};
   // reservations List Data 
   let currentReservationSelectedData = {};
-  let currentReservSelectedIndex = 0;
+  let currentReservSelectedIndex = -1;
 // User Logged Data
 
 // Employee Login Data 
@@ -1288,8 +1484,6 @@ let currentSelectedEmployeeData = {};
 let currentSelectedEmployeeIndex = -1;
 let currentSelectedRoomIndex = -1;
 let currentSelectedRoomData = {};
-
-
 
 // --------------- ** DATA ** -----------------
 
