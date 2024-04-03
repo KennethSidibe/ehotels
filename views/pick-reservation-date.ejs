@@ -20,22 +20,35 @@
     <!-- Template Styles -->
 </head>
 <body>
+    
+    <style>
+        .hide {
+           display: none;
+        }
+     </style>
 
-    <form action="/rooms" method="POST">
+    <form action="/rooms" id="userPickDateForm" method="POST">
         <div class="p-5">
             <div class="container">
                 <div class="box mb-3">
                     <h3>Choisi la date d'arrivée</h3>
-                    <input type="text" class="datepicker-here form-control minMaxExample" name="arrivalDate" data-date-format="dd/mm/yyyy" data-language='en' placeholder="Choisi la date d'arrivée">
+                    <input type="text" id="arrivalDateInput" class="datepicker-here form-control minMaxExample" name="arrivalDate" data-date-format="dd/mm/yyyy" data-language='en' placeholder="Choisi la date d'arrivée">
+                    <div
+                    id="arrivalDateError"
+                    class="text-center hide text-danger form-text fw-medium"
+                  ></div>
                 </div>
                 <div class="box my-3">
                     <h3>Choisi la date de départ</h3>
-                    <input type="text" class="datepicker-here form-control minMaxExample" name="departureDate" data-date-format="dd/mm/yyyy" data-language='en' placeholder="Choisi la date départ">
+                    <input type="text" id="departureDateInput" class="datepicker-here form-control minMaxExample" name="departureDate" data-date-format="dd/mm/yyyy" data-language='en' placeholder="Choisi la date départ">
+                    <div
+                    id="departureDateError"
+                    class="text-center hide text-danger form-text fw-medium"
+                  ></div>
                 </div>
                 <div class="row w-100">
                     <div style="display: flex; justify-content:center" >
-        
-                        <button class=" btn btn-dark fs-5 btn-follow">Choisi l'hôtel</button>
+                        <button type="submit" class=" btn btn-dark fs-5 btn-follow">Choisi l'hôtel</button>
                     </div>
                 </div>
             </div>
@@ -43,7 +56,7 @@
     </form>
     
     
-    <script src="js/pick-reservation-date-script.js" ></script>
+    
     <!--Libraries  -->
     <!-- JQuery -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" ></script>
@@ -53,5 +66,6 @@
     <!-- Boostrap -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="js/validate-date-picker.js"></script>
 </body>
 </html>
