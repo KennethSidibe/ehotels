@@ -70,22 +70,46 @@
     </style>
 
     <div class="container w-75 rounded-container">
-      <div class="d-flex flex-row gap-2">
-        <p><i class="bi bi-arrow-left"></i></p>
-        <% if(isHotelEditing) { %>
-          <h5 class="text-primary"><a href="/hotel-view-employee?id=<%= employeeIndex %>">Retour au profil</a></h5>
+      <div class="d-flex flex-column">
+
+        <% if(locals.isHotelEditing) { %>
+          <div class="d-flex flex-row gap-2">
+            <p><i class="bi bi-arrow-left"></i></p>
+            <h5 class="text-primary"><a href="/hotel-view-employee?id=<%= employeeIndex %>">Retour au profil</a></h5>
+          </div>
+          <h3 class="mb-0">Modifier employé</h3>
+          <p class="text-body-tertiary">Hôtel: <%= data.hotel_name %></p>
+          <% } else if (locals.isHotelAdding) { %>
+            <div class="d-flex flex-row gap-2">
+              <p><i class="bi bi-arrow-left"></i></p>
+              <h5 class="text-primary"><a href="/hotel-adm">Retour au profil</a></h5>
+            </div>
+            <h3 class="mb-0">Ajouter une chambre</h3>
+            <p class="mt-0 text-body-tertiary">Hôtel: <%= hotelName %></p>
         <% } else { %>
-          <h5 class="text-primary"><a href="/employee">Retour au profil</a></h5>
+          <div class="d-flex flex-row gap-2">
+            <p><i class="bi bi-arrow-left"></i></p>
+            <h5 class="text-primary"><a href="/employee">Retour au profil</a></h5>
+          </div>
+          <h3 class="mb-0">Modifier informations</h3>
+          <p class="text-body-tertiary">Hôtel: <%= data.hotel.hotel_name %></p>
           <% } %>
+
       </div>
-      <% if(isHotelEditing) { %>
+
+      <% if(locals.isHotelEditing) { %>
         <form action="/hotel-update-employee" id="modifyUserForm" method="post" class="mt-5">
+      <% } else if (locals.isHotelAdding) { %>
+        <form action="/hotel-add-employee" id="modifyUserForm" method="post" class="mt-5">
       <% } else { %>
         <form action="/update-employee" id="modifyUserForm" method="post" class="mt-5">
         <% } %>
+
         <div class="row my-3">
           <h3 class="mb-3">Contact</h3>
-          <div class="col">
+          <div class="col-6">
+
+              <%  %>
             <label for="first name" class="form-label">Prénom</label>
             <input
               type="text"
@@ -93,15 +117,17 @@
               id="firstNameInput"
               name="firstName"
               placeholder="Moussa"
+              <% if (!locals.isHotelAdding) {  %>
               value="<%= capitalizeFirstLetter(data.first_name) %>"
+              <% } %>
             />
             <div
               id="firstNameError"
-              class="form-text text-danger fw-medium"
+              class="hide form-text text-danger fw-medium"
             ></div>
           </div>
 
-          <div class="col">
+            <div class="col-6">
             <label for="last name" class="form-label">Nom de Famille</label>
             <input
               type="text"
@@ -109,14 +135,65 @@
               id="lastNameInput"
               name="lastName"
               placeholder="Sidibe"
+              <% if (!locals.isHotelAdding) {  %>
               value="<%= capitalizeFirstLetter(data.last_name) %>"
+              <% } %>
             />
             <div
               id="lastNameError"
               class="hide form-text text-danger fw-medium"
             ></div>
           </div>
+
+          <% if(locals.isHotelAdding) { %>
+              <div class="col-6 mt-5">
+                <label for="last name" class="form-label">Numéro d'Assurance Sociale</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="nasInput"
+                  name="nas"
+                  placeholder="842-758-924"
+                />
+                <div
+                  id="nasError"
+                  class="hide form-text text-danger fw-medium"
+                ></div>
+              </div>
+              <div class="col-6 mt-5">
+                <label for="last name" class="form-label">Job Role</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="jobRoleInput"
+                  name="jobRole"
+                  placeholder="Manager"
+                />
+                <div
+                  id="jobRoleError"
+                  class="hide form-text text-danger fw-medium"
+                ></div>
+              </div>
+              <div class="col-6 mt-3">
+                <label for="Extensions" class="form-label">Privilège Employé</label>
+                <select
+                  class="form-select"
+                  name="isAdmin"
+                  id="isAdminInput"
+                  aria-label="Default select example"
+                >
+                  <option selected value="no-value">Selectionne un privilège</option>
+                  <option value="NO">Simple</option>
+                  <option value="YES">Administrateur</option>
+                </select>
+                <div
+                  id="isAdminError"
+                  class="hide form-text text-danger fw-medium"
+                ></div>
+              </div>
+          <% } %>
         </div>
+
         <div class="row mt-5">
           <div class="col-6">
             <label for="Email" class="form-label">Email</label>
@@ -126,24 +203,44 @@
               class="form-control"
               name="email"
               placeholder="moussasidibe@gmail.com"
+              <% if (!locals.isHotelAdding) {  %>
               value="<%= data.email %>"
+              <% } %>
             />
             <div
               id="emailError"
               class="hide form-text text-danger fw-medium"
             ></div>
           </div>
+          <% if(locals.isHotelAdding) { %>
+          <div class="col-6">
+            <label for="Email" class="form-label">Mot de passe</label>
+            <input
+              type="password"
+              id="pwdInput"
+              class="form-control"
+              name="pwd"
+            />
+            <div
+              id="pwdError"
+              class="hide form-text text-danger fw-medium"
+            ></div>
+
+          </div>
+          <% } %>
         </div>
         <div class="row mt-4">
           <div class="col">
-            <label for="Phone Number" class="form-label">Phone Number: </label>
+            <label for="Phone Number" class="form-label">Numéro de téléphone: </label>
             <input
               type="tel"
               id="phone"
               class="form-control"
               name="phoneNumber"
               placeholder=""
+              <% if (!locals.isHotelAdding) {  %>
               value="<%= data.phone_number %>"
+              <% } %>
             />
             <div
               id="phoneNumberError"
@@ -153,7 +250,7 @@
         </div>
         <div class="row mt-4">
           <div class="col-5">
-            <label for="address" class="form-label">Address</label>
+            <label for="address" class="form-label">Adresse</label>
             <input
               type="text"
               id="streetNameInput"
@@ -161,7 +258,9 @@
               id="streetNameInput"
               name="streetName"
               placeholder="506 rue des Marquis"
+              <% if (!locals.isHotelAdding) {  %>
               value="<%= data.street_name %>"
+              <% } %>
             />
             <div
               id="streetNameError"
@@ -177,7 +276,9 @@
               id="cityInput"
               name="city"
               placeholder="Ouagadougou"
+              <% if (!locals.isHotelAdding) {  %>
               value="<%= capitalizeFirstLetter(data.city) %>"
+              <% } %>
             />
             <div
               id="cityError"
@@ -188,7 +289,7 @@
           <div class="col">
             <label for="Country" class="form-label">Pays</label>
             <select class="form-select" id="countryInput" name="country">
-              <option>Pays</option>
+              <option value="no-value">Pays</option>
               <option value="AF">Afghanistan</option>
               <option value="AX">Aland Islands</option>
               <option value="AL">Albania</option>
@@ -462,7 +563,9 @@
               class="form-control"
               name="zipCode"
               placeholder="A9C 7R0"
+              <% if (!locals.isHotelAdding) {  %>
               value="<%= data.zipCode %>"
+              <% } %>
             />
             <div
               id="zipCodeError"
@@ -474,7 +577,11 @@
             class="d-flex mt-5 mb-2 flex-row justify-content-center align-items-center"
           >
             <button value="submit" id="submitFormBtn" class="btn btn-dark rounded-4">
+              <% if (locals.isHotelAdding) {  %>
+                Ajouter Employé 
+              <% } else { %>
               Appliquer les changements
+              <% } %>
             </button>
           </div>
         </div>
@@ -495,11 +602,20 @@
               utilsScript:
                 "https://cdn.jsdelivr.net/npm/intl-tel-input@20.1.0/build/js/utils.js",
             });
-            $("#country").val("<%= data.country %>");
-        })
+            
+            let countryString = "<%= locals.data ? (locals.data.country ? locals.data.country : 'no-value') : 'no-value' %>";
+            let isHotelAdding = "<%= locals.isHotelAdding ? locals.isHotelAdding : false %>" === 'true' ? true : false;
+            window.isHotelAdding = isHotelAdding;
+            $("#countryInput").val(countryString);
+            
+        });
     </script>
     <!-- Tel Phone Input JS -->
 
     <script src="js/validateForm-modify-user-profile.js"></script>
+    <% if(locals.isHotelAdding) { %>
+    <script src="js/format-nas-script.js"></script>
+    <script src="js/format-postal-code-script.js"></script>
+    <% } %>
   </body>
 </html>
