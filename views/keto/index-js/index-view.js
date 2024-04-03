@@ -1,7 +1,7 @@
 // code for date picker to work
 // needs jquery and jqueryui
 
-$("#arrivalDatePicker").datepicker({
+$("#arrivalDateInput").datepicker({
     firstDay: 1,
     showOtherMonths: true,
     changeMonth: true,
@@ -13,7 +13,7 @@ $("#arrivalDatePicker").datepicker({
     $(".ui-datepicker").addClass("active");
   });
   
-$("#departureDatePicker").datepicker({
+$("#arrivalDateInput").datepicker({
     firstDay: 1,
     showOtherMonths: true,
     changeMonth: true,
