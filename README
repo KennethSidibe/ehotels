@@ -1,15 +1,17 @@
 Ehotels est un projet pour que les etudiants en base de donne I puisse se forger un peu la main 
-sur la creation dune base de donnee en creant le site web d'une chaine d'hotellerie.
+sur la création dune base de donnee en créant le site web d'une chaine d'hôtellerie.
 
-Pour lancer le projet :
+Pour lancer le projet:
 
-Cloner le repository 
-Installer les dependencies avec npm install 
+1. Cloner le repository 
+
+2. Installer les dependencies avec npm install 
 (Si vous n'avez pas nodejs et npm veuillez les installer)
 (Vous pouvez trouver plein de tutoriels en ligne pour savoir comment installer cela)
 
-Creer les tables de la base de donne grace aux commandes sql dans queries/tables.sql
+3. Créer les tables de la base de données grace aux commandes sql dans queries/tables.sql
 ou
-Importer la base de donnees sql avec le fichier dump generer avec postgre_dump (pg_dump)
+Importer la base de données SQL avec le fichier dump génerer avec postgre_dump (pg_dump)
+P.S c'est la méthode la plus rapide
 
-Et Vous etes lance, enjoy !
+Et Vous êtes lancé, enjoy !
