@@ -71,6 +71,8 @@ $(document).ready(function() {
         const ARRIVAL_PAST_DATE_ERROR = "La date d'arrivée doit être doit dans le futur";
         const DEPARTURE_PAST_DATE_ERROR = "La date de départ doit être doit dans le futur";
         const DEPARTURE_DATE_CURRENT_DATE_ERROR = "La date de départ ne peut pas être aujourd'hui";
+        hideError(arrivalDateErrorId);
+        hideError(departureDateErrorId);
 
         // Current date at midnight for comparison
         const currentDate = new Date();
@@ -101,7 +103,7 @@ $(document).ready(function() {
         currentDate.setHours(0, 0, 0, 0);
 
         // arrival and departure are exact
-        if(arrivalDate.getDay() === departureDate.getDay() && arrivalDate.getMonth() === departureDate.getMonth() 
+        if(arrivalDate.getDate() === departureDate.getDate() && arrivalDate.getMonth() === departureDate.getMonth() 
             && arrivalDate.getFullYear() === departureDate.getFullYear() ) {
             showError(arrivalDateErrorId, DATE_EXACT, DEPARTURE_DATE_INPUT_ID);
             return false;
@@ -135,7 +137,6 @@ $(document).ready(function() {
         hideError(arrivalDateErrorId);
         hideError(departureDateErrorId);
         // If all validations pass
-        console.log("Validation passed. Dates are valid.");
         return true;
     }
     
@@ -157,6 +158,13 @@ $(document).ready(function() {
         let element = $('#'+inputErrorId);
         element.addClass('hide');
         element.text('');
+    }
+
+    // Iterate through and hide all errors
+    function hideAllErrors() {
+        ERROR_IDS.forEach((id) => {
+            hideError(id);
+    });
     }
 
     function validateRoomPrice(roomPrice, roomPriceErrorMsg, roomPriceErrorId, roomPriceInputId) {
@@ -257,6 +265,22 @@ $(document).ready(function() {
     const CITY_INPUT_ID = 'cityInput';
     const COUNTRY_INPUT_ID = 'countryInput';
     const ZIP_CODE_INPUT_ID = 'zipCodeInput';
+
+    //All error is in a list
+    const ERROR_IDS = [
+    ARRIVAL_DATE_ERROR_ID,
+    DEPARTURE_DATE_ERROR_ID,
+    ROOM_PRICE_ERROR_ID,
+    FIRST_NAME_ERROR_ID,
+    LAST_NAME_ERROR_ID,
+    EMAIL_ERROR_ID,
+    PWD_ERROR_ID,
+    PHONE_NUMBER_ERROR_ID,
+    STREET_NAME_ERROR_ID,
+    CITY_ERROR_ID,
+    COUNTRY_ERROR_ID,
+    ZIP_CODE_ERROR_ID
+    ];
 
     
 });

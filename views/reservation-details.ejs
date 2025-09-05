@@ -1,48 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Book Room</title>
-    
-        <!-- Bootstrap -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-        <!-- Boostrap -->
-    
-        <!-- Page Style -->
-        <link rel="stylesheet" href="styles/rooms-list.css">
-        <link rel="stylesheet" href="styles/reservation-details-modal.css">
-        <!-- Page Style -->
-    
-        <!-- Boostrap Icons -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-        <!-- Boostrap Icons -->
 
-        <!-- Tel Phone Input -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@20.1.0/build/css/intlTelInput.css">
-        <!-- Tel Phone Input -->
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Room</title>
 
-        <!-- Font awesome CDN -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <!-- Font Awesome CDN -->
-    
-    </head>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+    <!-- Boostrap -->
+
+    <!-- Page Style -->
+    <link rel="stylesheet" href="styles/rooms-list.css" />
+    <link rel="stylesheet" href="styles/reservation-details-modal.css" />
+    <!-- Page Style -->
+
+    <!-- Boostrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <!-- Boostrap Icons -->
+
+    <!-- Tel Phone Input -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@20.1.0/build/css/intlTelInput.css" />
+    <!-- Tel Phone Input -->
+
+    <!-- Font awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Font Awesome CDN -->
+</head>
 
 <body>
-
     <style>
-        .hotel-img{
+        .hotel-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-        .reservation-info-container{
+
+        .reservation-info-container {
             background-color: #dff5ffdc;
         }
-        hr{
-            opacity: 0.08; 
+
+        hr {
+            opacity: 0.08;
             width: 85%;
         }
+
         .hide {
             display: none;
         }
@@ -51,69 +56,97 @@
     <div class="container w-75 pt-4">
         <div class="d-flex flex-row gap-2 mb-2">
             <p><i class="bi bi-arrow-left"></i></p>
-            <h5 class="text-primary "><a href="">Retour aux réservations</a></h5>
-        </div>  
-        <h2 style="margin-bottom: 0px;" >Réservation</h2>
-        <p class="text-secondary" style="font-size: 0.95em" >Pour changer la chambre <br> appeler notre service à la clientèle: +226 80 90 10 01</p>
+            <h5 class="text-primary">
+                <a href="/reservations">Retour aux réservations</a>
+            </h5>
+        </div>
+        <h2 style="margin-bottom: 0px">Réservation</h2>
+        <p class="text-secondary" style="font-size: 0.95em">
+            Pour changer la chambre <br />
+            appeler notre service à la clientèle: +226 80 90 10 01
+        </p>
     </div>
 
     <!-- Reservation Info -->
 
-    <form action="/update-user-reserv" id="updateUserReservForm" method="post" >
-        <div class="container w-75 my-4 p-4 reservation-info-container rounded-4" id="reservationInfo" >
+    <form action="/update-user-reserv" id="updateUserReservForm" method="post">
+        <div class="container w-75 my-4 p-4 reservation-info-container rounded-4" id="reservationInfo">
             <style>
                 .info-name {
-                    color: #0700cf
+                    color: #0700cf;
                 }
-                .info-name + p {
+
+                .info-name+p {
                     font-weight: 500;
                 }
             </style>
             <div class="d-flex flex-row">
-                <div class="yellow" style="height: 128px; width:128px;">
-                    <img src="images/room1.jpg" class="img-fluid hotel-img rounded-4" alt="">
+                <div class="yellow" style="height: 128px; width: 128px">
+                    <img src="images/room1.jpg" class="img-fluid hotel-img rounded-4" alt="" />
                 </div>
                 <div class="ms-1 row gy-0 d-flex flex-column">
-                    <div class="d-flex " >
-                        <h4 style="margin-bottom: 0px;"><%= capitalizeFirstLetter(data.hotel.room.room_name) %></h4>
+                    <div class="d-flex">
+                        <h4 style="margin-bottom: 0px">
+                            <%= capitalizeFirstLetter(data.hotel.room.room_name) %>
+                        </h4>
                     </div>
-                    <h6 ><%= capitalizeFirstLetter(data.hotel.hotel_name) %></h6>
-                    <p class="fw-light"><%= data.hotel.address %></p>
+                    <h6>
+                        <%= capitalizeFirstLetter(data.hotel.hotel_name) %>
+                    </h6>
+                    <p class="fw-light">
+                        <%= data.hotel.address %>
+                    </p>
                 </div>
             </div>
-            
+
             <div class="row my-5">
                 <div class="col d-flex flex-column">
                     <p class="my-2 info-name">Arrivée</p>
-                    <p class="fs-5 reservation-date-info" ><%= capitalizeFirstLetter(formatDateToReadable(data.arrival_date)) %></p>
-                    <input type="date" name="arrivalDate" id="arrivalDateInput" class="form-control hide" value="<%= formatDateToYYYYMMDD(data.arrival_date) %>" >
+                    <p class="fs-5 reservation-date-info">
+                        <%= capitalizeFirstLetter(formatDateToReadable(data.arrival_date)) %>
+                    </p>
+                    <input type="date" name="arrivalDate" id="arrivalDateInput" class="form-control hide"
+                        value="<%= formatDateToYYYYMMDD(data.arrival_date) %>" />
+                    <div id="arrivalDateError" class="hide form-text text-danger fw-medium"></div>
                 </div>
                 <div class="col d-flex flex-column align-items-center">
                     <i class="bi bi-moon-stars fs-2 my-2"></i>
-                    <p class="fw-medium"><%= data.numberOfNights %> <%= capitalizeFirstLetter(data.nightString) %></p>
+                    <p class="fw-medium" id="numberOfNightsElem">
+                        <%= data.numberOfNights %>
+                            <%= capitalizeFirstLetter(data.nightString) %>
+                    </p>
                 </div>
                 <div class="col d-flex flex-column align-items-end">
                     <p class="info-name">Départ</p>
-                    <p class="fs-5 reservation-date-info" ><%= capitalizeFirstLetter(formatDateToReadable(data.departure_date)) %></p>
-                    <input type="date" name="departureDate" id="departureDateInput" class="form-control hide" value="<%= formatDateToYYYYMMDD(data.departure_date) %>" >
+                    <p class="fs-5 reservation-date-info">
+                        <%= capitalizeFirstLetter(formatDateToReadable(data.departure_date)) %>
+                    </p>
+                    <input type="date" name="departureDate" id="departureDateInput" class="form-control hide"
+                        value="<%= formatDateToYYYYMMDD(data.departure_date) %>" />
+                    <div id="departureDateError" class="hide form-text text-danger fw-medium"></div>
                 </div>
             </div>
-        
-                <div class="d-flex justify-content-center">
-                    <hr>
-                </div>
+
+            <div class="d-flex justify-content-center">
+                <hr />
+            </div>
             <div class="row my-5">
                 <div class="col d-flex flex-column">
-                    <p class="my-2 info-name" >Chambres & Personnes</p>
-                    <p class="fs-5" ><%= data.hotel.room.capacity %> <%= capitalizeFirstLetter(data.personString) %> (1 chambre)</p>
+                    <p class="my-2 info-name">Chambres & Personnes</p>
+                    <p class="fs-5">
+                        <%= data.hotel.room.capacity %>
+                            <%= capitalizeFirstLetter(data.personString) %> (1 chambre)
+                    </p>
                 </div>
                 <div class="col d-flex flex-column align-items-end">
-                    <p class="info-name" >Prix/Nuit</p>
-                    <p><%= data.hotel.room.price %>$</p>
+                    <p class="info-name">Prix/Nuit</p>
+                    <p id="roomNightPriceElem">
+                        <%= data.hotel.room.price %>$
+                    </p>
                 </div>
             </div>
             <div class="d-flex justify-content-center">
-                <hr>
+                <hr />
             </div>
             <div class="row my-5">
                 <div class="col d-flex flex-column">
@@ -143,26 +176,33 @@
                 </div>
             </div>
             <div class="d-flex justify-content-center">
-                <hr>
+                <hr />
             </div>
-        
+
             <div class="row mt-5">
                 <div class="col d-flex flex-column">
                     <p class="my-2 info-name fw-bold">Total price:</p>
                 </div>
                 <div class="col d-flex flex-column align-items-end">
-                    <h2 class="my-0" ><%= data.price %>$</h2>
-                    <p class="fw-light" ><%= data.numberOfNights %> <%= data.nightString %></p>
+                    <h2 id="reservPriceElem" class="my-0">
+                        <%= data.price %>$
+                    </h2>
+                    <p class="fw-light" id="numberOfNightsElem2">
+                        <%= data.numberOfNights %>
+                            <%= data.nightString %>
+                    </p>
                 </div>
             </div>
             <div class="d-flex gap-5 flex-row justify-content-center align-items-center">
                 <button type="button" id="modifyBtn" class="btn btn-dark fs-4 rounded-4">
                     Modifier la réservation
                 </button>
-                <button type="button" onclick="window.dialog.showModal();" id="cancelBtn" class="btn btn-danger fs-4 rounded-4">
+                <button type="button" onclick="window.dialog.showModal();" id="cancelBtn"
+                    class="btn btn-danger fs-4 rounded-4">
                     Annuler la réservation
                 </button>
-                <button type="submit" value="submit" id="confirmModificationBtn" class="btn btn-dark fs-4 rounded-4 hide">
+                <button type="submit" value="submit" id="confirmModificationBtn"
+                    class="btn btn-dark fs-4 rounded-4 hide">
                     Confirmer la modification
                 </button>
             </div>
@@ -172,17 +212,20 @@
 
     <!-- Cancel Reservation Modal -->
     <dialog id="dialog">
-        <h2 class="text-danger" >Attention</h2>
+        <h2 class="text-danger">Attention</h2>
         <p>Est ce que tu es sûr de vouloir annuler ta réservation?</p>
-        <p class="text-danger" style="margin-bottom: 0px; text-decoration:underline"  >Tu ne pourras pas revenir en arrière</p>
+        <p class="text-danger" style="margin-bottom: 0px; text-decoration: underline">
+            Tu ne pourras pas revenir en arrière
+        </p>
         <div class="d-flex flex-row justify-content-around my-3">
-            <button  type="button" class="btn btn-primary">Garder</button>
+            <button type="button" class="btn btn-primary">Garder</button>
             <a href="/delete-reserv"><button type="button" class="btn btn-danger">Annuler</button></a>
         </div>
-        <button onclick="window.dialog.close();" aria-label="close" class="x">❌</button>
+        <button onclick="window.dialog.close();" aria-label="close" class="x">
+            ❌
+        </button>
     </dialog>
     <!-- Cancel Reservation Modal -->
-    
 
     <!-- JQuery CDN -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -190,9 +233,8 @@
 
     <!-- Page Script -->
     <script src="js/reservation-details-script.js"></script>
-    <script src="js/validate-modify-user-reservation.js" ></script>
+    <script src="js/validate-modify-user-reservation.js"></script>
     <!-- Page Script -->
 </body>
-
 
 </html>

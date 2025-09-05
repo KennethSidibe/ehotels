@@ -32,15 +32,17 @@ $(document).ready(function() {
         // Parse the provided date strings to Date objects
         const arrivalDate = new Date(arrivalDateString);
         const departureDate = new Date(departureDateString);
+        
 
         // Adjust provided dates to midnight for fair comparison
         arrivalDate.setHours(24, 0, 0, 0);
         departureDate.setHours(24, 0, 0, 0);
-        currentDate.setHours(0, 0, 0, 0);
+        currentDate.setHours(24, 0, 0, 0);
 
         // arrival and departure are exact
-        if(arrivalDate.getDay() === departureDate.getDay() && arrivalDate.getMonth() === departureDate.getMonth() 
-            && arrivalDate.getFullYear() === departureDate.getFullYear() ) {
+        if(arrivalDate.getDate() === departureDate.getDate() && 
+           arrivalDate.getMonth() === departureDate.getMonth() &&
+           arrivalDate.getFullYear() === departureDate.getFullYear() ) {
             showError(arrivalDateErrorId, DATE_EXACT, DEPARTURE_DATE_INPUT_ID);
             return false;
         }
@@ -64,7 +66,7 @@ $(document).ready(function() {
         }
 
         // departure date is exact to current date
-        if(departureDate.getDay() === currentDate.getDay() && departureDate.getMonth() === currentDate.getMonth()
+        if(departureDate.getDate() === currentDate.getDate() && departureDate.getMonth() === currentDate.getMonth()
             && departureDate.getFullYear() === currentDate.getFullYear()) {
             showError(departureDateErrorId, DEPARTURE_DATE_CURRENT_DATE_ERROR, departureDateInputId);
             return false;
@@ -73,7 +75,7 @@ $(document).ready(function() {
         hideError(arrivalDateErrorId);
         hideError(departureDateErrorId);
         // If all validations pass
-        console.log("Validation passed. Dates are valid.");
+        
         return true;
     }
     
@@ -112,7 +114,7 @@ $(document).ready(function() {
     
         // if valid, submit the form.
         if (stayDatesValid) {
-            alert("form data valid, submitting");
+            
         } else {
             event.preventDefault();
             $('#updateUserReservForm')[0].scrollIntoView({

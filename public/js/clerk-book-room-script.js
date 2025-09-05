@@ -112,8 +112,5 @@ $(document).ready(() => {
     $('#arrivalDateInput')[0].value = currentDate;
 
     // ----------------- Current date for arrival Date Picker -------------------
-
-    console.log("Current Room Selected Id: ", enabledCardId);
-    console.log("Current Room Selected Id: ", enabledCardPrice);
     
 });

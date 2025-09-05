@@ -130,7 +130,6 @@
                     id="arrivalDateInput"
                     class="form-control"
                     name="arrivalDate"
-                    placeholder="Moussa"
                   />
                   <div
                     id="arrivalDateError"
@@ -146,8 +145,7 @@
                     id="departureDateInput"
                     class="form-control"
                     name="departureDate"
-                    value="moussa"
-                    placeholder="Moussa"
+                    value="2025-09-20"
                   />
                   <div
                     id="departureDateError"
@@ -200,6 +198,7 @@
                     name="firstName"
                     id="firstNameInput"
                     placeholder="Moussa"
+                    value="jeremy"
                   />
                   <div
                     id="firstNameError"
@@ -215,6 +214,7 @@
                     class="form-control"
                     name="lastName"
                     placeholder="Sidibe"
+                    value="capo"
                     id="lastNameInput"
                   />
                   <div
@@ -231,6 +231,7 @@
                     class="form-control"
                     name="email"
                     id="emailInput"
+                    value="jeremycap@gmail.com"
                     placeholder="moussasidibe@gmail.com"
                   />
                   <div
@@ -246,6 +247,7 @@
                     name="pwd"
                     id="pwdInput"
                     placeholder=""
+                    value="KenSuperPassword123!?@"
                   />
                   <div
                     id="pwdError"
@@ -261,6 +263,7 @@
                   <input
                     type="tel"
                     id="phone"
+                    value="5457653223"
                     class="form-control"
                     name="phoneNumber"
                     placeholder=""
@@ -279,6 +282,7 @@
                     id="streetNameInput"
                     class="form-control"
                     name="streetName"
+                    value="12 rue des mers noirs"
                     placeholder="506 rue des Marquis"
                   />
                   <div
@@ -293,6 +297,7 @@
                     id="cityInput"
                     class="form-control"
                     name="city"
+                    value="Ouagadougou"
                     placeholder="Ouagadougou"
                   />
                   <div
@@ -631,5 +636,28 @@
     <script src="js/clerk-book-room-script.js"></script>
     <script src="js/validateForm-clerk-script.js"></script>
     <!-- Page Script -->
+
+     <!--Script for testing purposes  -->
+     <script>
+        function generateRandomEmail() {
+          const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+          const nameLength = 8;
+          let username = "";
+
+          for (let i = 0; i < nameLength; i++) {
+            username += chars.charAt(Math.floor(Math.random() * chars.length));
+          }
+
+          const domains = ["example.com", "test.com", "mail.com", "dummy.org"];
+          const domain = domains[Math.floor(Math.random() * domains.length)];
+
+          return `${username}@${domain}`;
+        }
+        $(document).ready(function() {
+          $("#emailInput").val(generateRandomEmail());
+        });
+
+     </script>
+     <!--Script for testing purposes  -->
   </body>
 </html>

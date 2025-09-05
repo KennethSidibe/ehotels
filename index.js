@@ -13,7 +13,7 @@ const db = new pg.Client({
   user: "postgres",
   host: "localhost",
   database: "ehotels",
-  password: "8@9eqtd5n4cBTED!",
+  password: "e8T7zRm$pRTP6yJ",
   port: 5433,
 });
 db.connect();
@@ -48,11 +48,16 @@ app.use(express.static("public"));
 
 app.listen(port, (req, res) => {
   console.log(`Listening on port : ${port}`);
+
 });
 
 // ---------------- ROUTES ---------------------
 
 app.get("/", async (req, res) => {
+
+    let pwd = await hashPassword("12345");
+  console.log(`New Pwd : ${pwd}`);
+  
   res.render("keto/index.ejs");
 });
 
@@ -94,7 +99,7 @@ app.get("/hotel-rooms-list", async (req, res) => {
 app.post("/create-reserv", async (req, res) => {
   let userFirstName = req.body.firstName;
   let userLastName = req.body.lastName;
-  let userEmail = req.body.email;
+  let userEmail = req.body.email.toLowerCase();
   let userPwd = req.body.pwd;
   let userPhoneNumber = req.body.phoneNumber;
   let userStreetName = req.body.streetName;
@@ -105,7 +110,7 @@ app.post("/create-reserv", async (req, res) => {
   let clientData = {
     firstName: userFirstName,
     lastName: userLastName,
-    email: userEmail,
+    email: userEmail.toLowerCase(),
     phoneNumber: userPhoneNumber,
     pwd: userPwd,
     streetName: userStreetName,
@@ -168,7 +173,7 @@ app.get("/login", async (req, res) => {
 });
 
 app.post("/user", async (req, res) => {
-  const email = req.body.email;
+  const email = req.body.email.toLowerCase();
   const pwd = req.body.pwd;
 
   let client = await verifyLoginEmail(email);
@@ -218,7 +223,7 @@ app.get('/employee', (req, res) => {
 
 app.post("/hotel-adm", async (req, res) => {
   
-  let email = req.body.email;
+  let email = req.body.email.toLowerCase();
   let pwd = req.body.pwd;
   let hotelAdmin = await verifyHotelAdminEmail(email);
   let hotelId = hotelAdmin.hotel_id;
@@ -567,7 +572,7 @@ app.post('/hotel-add-room', async(req, res) => {
 
 
 app.post('/employee', async(req, res) => {
-  let email = req.body.email;
+  let email = req.body.email.toLowerCase();
   let pwd = req.body.pwd;
   let employee = await verifyLoginEmployeeEmail(email);
   console.log(`employee data: ${JSON.stringify(employee, null, 2)}`);
@@ -668,7 +673,7 @@ app.post('/update-user', async (req, res) => {
   let clientId = currentLoggedClientData['id'];
     let firstName = req.body.firstName;
     let lastName = req.body.lastName;
-    let email = req.body.email;
+    let email = req.body.email.toLowerCase();
     let phoneNumber = req.body.phoneNumber;
     let streetName = req.body.streetName;
     let city = req.body.city;
@@ -679,21 +684,21 @@ app.post('/update-user', async (req, res) => {
       id:clientId,
       first_name: firstName,
       last_name:lastName,
-      email: email,
+      email: email.toLowerCase(),
       phone_number:phoneNumber,
       street_name:streetName,
       city: city,
       country:country,
       zipCode:zipCode
     };
-
+    
     let didUpdateWork = updateUserInfo(userData);
 
     if(didUpdateWork) {
       currentLoggedClientData['first_name'] = firstName;
       currentLoggedClientData['last_name'] = lastName;
       currentLoggedClientData['address'] = `${streetName}, ${city}, ${country}, ${zipCode}`;
-      currentLoggedClientData['email'] = email;
+      currentLoggedClientData['email'] = email.toLowerCase();
       currentLoggedClientData['phone_number'] = phoneNumber;
   
       res.redirect('/successful-modify-user-profile');
@@ -709,7 +714,7 @@ app.post('/update-employee', async(req, res) => {
   let employeeId = currentLoggedEmployeeData['id'];
   let firstName = req.body.firstName;
   let lastName = req.body.lastName;
-  let email = req.body.email;
+  let email = req.body.email.toLowerCase();
   let phoneNumber = req.body.phoneNumber;
   console.log(`Phone number body: ${phoneNumber}`);
   let streetName = req.body.streetName;
@@ -721,7 +726,7 @@ app.post('/update-employee', async(req, res) => {
     id:employeeId,
     first_name: firstName,
     last_name:lastName,
-    email: email,
+    email: email.toLowerCase(),
     phone_number:phoneNumber,
     street_name:streetName,
     city: city,
@@ -736,7 +741,7 @@ app.post('/update-employee', async(req, res) => {
     currentLoggedEmployeeData['first_name'] = firstName;
     currentLoggedEmployeeData['last_name'] = lastName;
     currentLoggedEmployeeData['address'] = `${streetName}, ${city}, ${country}, ${zipCode}`;
-    currentLoggedEmployeeData['email'] = email;
+    currentLoggedEmployeeData['email'] = email.toLowerCase();
     currentLoggedEmployeeData['phone_number'] = phoneNumber;
 
     res.redirect('/successful-modify-employee-profile');
@@ -752,7 +757,7 @@ app.post('/hotel-add-employee', async(req, res) => {
   let firstName = req.body.firstName;
   let lastName = req.body.lastName;
   let nas = req.body.nas;
-  let email = req.body.email;
+  let email = req.body.email.toLowerCase();
   let pwd = req.body.pwd;
   let phoneNumber = req.body.phoneNumber;
   let streetName = req.body.streetName;
@@ -812,7 +817,7 @@ app.post('/hotel-update-employee', async(req, res) => {
   let employeeId = currentSelectedEmployeeData['id'];
   let firstName = req.body.firstName;
   let lastName = req.body.lastName;
-  let email = req.body.email;
+  let email = req.body.email.toLowerCase();
   let phoneNumber = req.body.phoneNumber;
   let streetName = req.body.streetName;
   let city = req.body.city;
@@ -864,19 +869,36 @@ app.post('/update-user-reserv', async(req, res) => {
   let arrivalDate = req.body.arrivalDate;
   let departureDate = req.body.departureDate;
   let reservRoomId = currentReservationSelectedData['id'];
+  
+  let numberOfNights = calculateNightsBetweenDates(arrivalDate, departureDate);
+  let roomPrice = parseInt(currentReservationSelectedData['hotel']['room'].price);
+  
+  
+  let newReservPrice = roomPrice * numberOfNights;
+  console.log("newReservPrice: ", newReservPrice);
+  
   let reservInfoToUpdate = {
     id:reservRoomId,
     arrival_date:arrivalDate,
     departure_date:departureDate,
+    price:newReservPrice
   };
-  let didUpdateWork = await updateReservationDates(reservInfoToUpdate);
+  let didUpdateWork = await updateReservationInformation(reservInfoToUpdate);
   
   if(didUpdateWork) {
+    console.log(`CurrentLogged Client Data : ${JSON.stringify(currentLoggedClientData)}`);
+    
     // if successfull
     let arrivalDateDb = `${arrivalDate}T04:00:00.000Z`;
     let departureDateDb = `${departureDate}T04:00:00.000Z`;
+
+    //update user reservation
     currentLoggedClientData.reservations[currentReservSelectedIndex]['arrival_date'] = arrivalDateDb;
     currentLoggedClientData.reservations[currentReservSelectedIndex]['departure_date'] = departureDateDb;
+    currentLoggedClientData.reservations[currentReservSelectedIndex]['price'] = newReservPrice;
+
+    let nextReservString = getClosetReservationString(currentLoggedClientData.reservations);
+    currentLoggedClientData.nextReservation = nextReservString;
     
     res.redirect('/successful-modify-user-reservation');
     return;
@@ -896,10 +918,35 @@ app.get('/successful-modify-user-profile', (req, res) => {
 
 async function updateReservationDates(reservInfo) {
   const query = `UPDATE reservations 
-              SET arrival_date = $1, departure_date = $2 
+              SET arrival_date = $1, departure_date = $2, 
               WHERE id = $3`;
   const paramValues = [reservInfo.arrival_date, reservInfo.departure_date, reservInfo.id];
-  console.log(`ArrivalDate : ${reservInfo.arrival_date}, DepartureDate: ${reservInfo.departure_date}`);
+  
+  try {
+
+    const result = await db.query(query, paramValues);
+    if(result.rowCount > 0 ) {
+      console.log(`Reservation successfully modified`);
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    console.error(`Error while updating reservations data: ${error.stack}`);
+    throw error;
+    return false;
+  }
+}
+
+async function updateReservationInformation(reservInfo) {
+  
+  const query = `UPDATE reservations 
+              SET arrival_date = $1, 
+              departure_date = $2, 
+              price = $3
+              WHERE id = $4`;
+  const paramValues = [reservInfo.arrival_date, reservInfo.departure_date, reservInfo.price, reservInfo.id];
+  
   try {
 
     const result = await db.query(query, paramValues);
@@ -1144,20 +1191,25 @@ app.get('/edit-employee-info', (req, res) => {
 app.get('/logout', async(req, res) => {
   let userType = req.query.userType !== 'undefined' ? req.query.userType : '';
   let redirectLink = '';
+  console.log("Usertype : ", userType);
+  
   switch (userType) {
     case 'employee':
       redirectLink = 'employee-login';
       break;
     case 'hotel-admin':
       redirectLink = 'hotel-login';
+      break;
     case 'user':
       redirectLink = 'login';
       break;
     default:
       redirectLink = 'login';
-      break;
   }
   // ------------ RESETING ALL DATA
+
+  console.log("redirect link : ", redirectLink);
+  
 
   // logout client
   currentLoggedClientData = {};
@@ -1254,10 +1306,6 @@ app.get("/clerk-book", async (req, res) => {
   };
   clerkCurrentHotelData['employee'] = employeeData;
 
-  console.log(
-    `Clerk hotel data: ${JSON.stringify(clerkCurrentHotelData, null, 2)}`
-  );
-
   res.render("clerk-book-room.ejs", { data: clerkCurrentHotelData });
 });
 
@@ -1265,12 +1313,8 @@ app.post("/clerk-create-reserv", async (req, res) => {
   let newClientId = await createClient(clerkBookClientData);
   clerkBookReservationData["clientId"] = newClientId;
 
-  console.log(`New client created: ${newClientId}`);
-
   let newReservationId = await createReservation(clerkBookReservationData);
   currentReservationId = newReservationId;
-
-  console.log(`New reservation created: ${currentReservationId}`);
 
   res.redirect("employee/?successful");
 });
@@ -1278,7 +1322,7 @@ app.post("/clerk-create-reserv", async (req, res) => {
 app.post("/clerk-confirm", async (req, res) => {
   let userFirstName = req.body.firstName;
   let userLastName = req.body.lastName;
-  let userEmail = req.body.email;
+  let userEmail = req.body.email.toLowerCase();
   let userPwd = req.body.pwd;
   let userPhoneNumber = req.body.phoneNumber;
   let userStreetName = req.body.streetName;
@@ -1375,8 +1419,6 @@ app.get("/reserv-details", async (req, res) => {
   let personString = getPersonString(parseInt(reservSelected.hotel.room.capacity));
   reservSelected['personString'] = personString;
 
-  console.log(`Reserv Selected object: ${JSON.stringify(reservSelected, null, 2)}`);
-
   currentReservationSelectedData = reservSelected;
   currentReservSelectedIndex = reservSelectedId;
 
@@ -1384,13 +1426,11 @@ app.get("/reserv-details", async (req, res) => {
     data:reservSelected, 
     capitalizeFirstLetter:capitalizeFirstLetter,
     formatDateToReadable:formatDateToReadable,
-    formatDateToYYYYMMDD:formatDateToYYYYMMDD
+    formatDateToYYYYMMDD:formatDateToYYYYMMDD,
   });
 
 });
 app.get("/reservations", async (req, res) => {
-
-  console.log(`data: ${JSON.stringify(currentLoggedClientData, null, 2)}`);
 
   res.render("user-reservations.ejs", {data:currentLoggedClientData, getStayShort:getStayShort, categoryToIcon:categoryToIcon});
 });
@@ -1512,10 +1552,8 @@ async function dropReservation(reservationId) {
   try {
     const result = await db.query(query, paramValues);
     if(result.rowCount > 0) {
-      console.log(`Successfully dropped reservation`);
       return true;
     } 
-    console.log(`Failed to dropped reservation`);
     return false;
   } catch (error) {
     console.error(`Error while deleting row: ${error.stack}`);
@@ -1634,9 +1672,6 @@ async function createReservation(reservationData) {
   let clientId = parseInt(reservationData.clientId);
   let price = parseInt(reservationData.stayPrice);
 
-  console.log(`arrival Date inside create meth: ${arrivalDateInsert}`);
-  console.log(`departure Date inside create meth: ${departureDateInsert}`);
-
   const query = `INSERT INTO reservations (room_id, arrival_date, client_id, 
         departure_date, price)
         VALUES(
@@ -1749,7 +1784,6 @@ async function getHotelReservations(hotelObject) {
       };
       reservations.push(roomReservationsObject);
     }
-  console.log(`Successfully queried reservations : ${reservations}`);
   return reservations;
   } catch(error) {
     console.error(`Error while getting hotel reservations: ${error.stack}`);
@@ -1887,10 +1921,8 @@ async function verifyLoginEmail(email) {
   try {
     let result = await db.query(query, paramValues);
     if (result.rows.length > 0) {
-      console.log("Client exists");
       return result.rows[0];
     } else {
-      console.log("Email is invalid");
       return [];
     }
   } catch (error) {
@@ -1907,10 +1939,8 @@ async function verifyLoginEmployeeEmail(email) {
   try {
     let result = await db.query(query, paramValues);
     if (result.rows.length > 0) {
-      console.log("employee exists");
       return result.rows[0];
     } else {
-      console.log("Email is invalid");
       return {};
     }
   } catch (error) {
@@ -1927,10 +1957,8 @@ async function verifyHotelAdminEmail(email) {
   try {
     let result = await db.query(query, paramValues);
     if (result.rows.length > 0) {
-      console.log("Admin exists");
       return result.rows[0];
     } else {
-      console.log("Email is invalid");
       return {};
     }
   } catch (error) {
